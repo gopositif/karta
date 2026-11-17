@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARTA Generator Pro - GO-POSITIF Desa Gonoharjo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- html2canvas & jsPDF untuk Ekspor PNG & PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f3e8ff 0%, #fce7f3 50%, #e0e7ff 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            box-shadow: 0 10px 30px -5px rgba(109, 40, 217, 0.08);
+        }
+
+        .btn-jewel {
+            background: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.35), inset 0 1px 1px rgba(255,255,255,0.4);
+            transition: all 0.2s ease;
+        }
+        .btn-jewel:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45), inset 0 1px 1px rgba(255,255,255,0.5);
+        }
+
+        /* ID Card Standard Ratio (CR80: 85.6mm x 53.98mm) */
+        .karta-wrapper {
+            width: 100%;
+            max-width: 520px;
+            aspect-ratio: 85.6 / 53.98;
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.22);
+            user-select: none;
+            background-color: #0e4157;
+            container-type: inline-size;
+        }
+
+        .karta-bg-default-front {
+            background: 
+                radial-gradient(circle at 85% 20%, rgba(26, 127, 136, 0.85) 0%, transparent 55%),
+                linear-gradient(135deg, #0d3b54 0%, #11566b 55%, #177882 100%);
+        }
+        .karta-bg-default-back {
+            background: 
+                radial-gradient(circle at 15% 80%, rgba(26, 127, 136, 0.85) 0%, transparent 55%),
+                linear-gradient(225deg, #0d3b54 0%, #11566b 55%, #177882 100%);
+        }
+
+        /* Typography scaling inside card using cqw */
+        .c-watermark { font-size: 2.25cqw; }
+        .c-title { font-size: 7.8cqw; line-height: 1; letter-spacing: 0.04em; color: #e2c275; text-shadow: 0 2px 4px rgba(0,0,0,0.45); }
+        .c-subtitle { font-size: 2.5cqw; color: #f8fafc; }
+        .c-pemdes { font-size: 2.4cqw; line-height: 1.15; color: #e2e8f0; }
+        .c-posyandu-title { font-size: 2.5cqw; line-height: 1.1; color: #f1f5f9; }
+        .c-posyandu-sub { font-size: 1.65cqw; color: #cbd5e1; }
+        .c-label { font-size: 2.35cqw; color: #cbd5e1; }
+        .c-value-name { font-size: 3.05cqw; line-height: 1.2; color: #ffffff; }
+        .c-value-addr { font-size: 2.65cqw; line-height: 1.25; color: #f1f5f9; }
+        .c-id-text { font-size: 3.3cqw; letter-spacing: 0.03em; color: #f8fafc; text-shadow: 0 1px 3px rgba(0,0,0,0.65); }
+        .c-footer { font-size: 2.05cqw; color: #f8fafc; }
+
+        /* Back Card Typography */
+        .cb-heading { font-size: 2.85cqw; line-height: 1.2; color: #ffffff; }
+        .cb-list { font-size: 2.25cqw; line-height: 1.3; color: #f1f5f9; }
+        .cb-box-text { font-size: 2.6cqw; line-height: 1.3; color: #ffffff; }
+        .cb-box-sub { font-size: 2.15cqw; line-height: 1.25; color: #e2e8f0; }
+        .cb-notice { font-size: 2.15cqw; line-height: 1.32; color: #f8fafc; }
+        .cb-wa { font-size: 2.35cqw; line-height: 1.35; color: #ffffff; }
+
+        /* Mode 1: Drag & Drop Layout Mode */
+        .draggable-el {
+            position: absolute;
+            z-index: 10;
+            transition: outline 0.15s ease;
+        }
+        body.layout-mode-active .draggable-el {
+            cursor: grab;
+            outline: 1.5px dashed rgba(250, 204, 21, 0.85);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        body.layout-mode-active .draggable-el:hover {
+            outline: 2px solid #facc15;
+            background-color: rgba(250, 204, 21, 0.1);
+        }
+        body.layout-mode-active .draggable-el.selected-el {
+            outline: 2.5px solid #ec4899 !important;
+            background-color: rgba(236, 72, 153, 0.15);
+            z-index: 30;
+        }
+
+        /* Mode 2: Edit Text Content Mode (Hanya elemen statis non-KK/Alamat/QR) */
+        body.text-edit-mode-active .draggable-el[data-text-editable="true"] {
+            cursor: pointer;
+            outline: 1.5px dashed #38bdf8;
+            outline-offset: 2px;
+            border-radius: 4px;
+            background-color: rgba(56, 189, 248, 0.08);
+        }
+        body.text-edit-mode-active .draggable-el[data-text-editable="true"]:hover,
+        body.text-edit-mode-active .draggable-el[data-text-editable="true"].selected-el {
+            outline: 2.5px solid #0284c7 !important;
+            background-color: rgba(14, 165, 233, 0.18);
+            z-index: 30;
+        }
+        body.text-edit-mode-active .draggable-el[data-text-editable="false"] {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: #ffffff !important;
+                margin: 0;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .draggable-el {
+                outline: none !important;
+                background-color: transparent !important;
+                opacity: 1 !important;
+            }
+            #print-area {
+                display: flex !important;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10mm;
+                justify-content: center;
+                align-items: flex-start;
+                padding: 10mm;
+                width: 100%;
+            }
+            .karta-wrapper {
+                width: 85.6mm !important;
+                height: 53.98mm !important;
+                max-width: none !important;
+                border-radius: 3mm !important;
+                box-shadow: none !important;
+                border: 0.2mm solid #cbd5e1;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased pb-16">
+
+    <!-- Navbar -->
+    <header class="glass-panel sticky top-0 z-40 border-b border-purple-200/60 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl btn-jewel flex items-center justify-center text-white font-bold shadow">
+                    <i data-lucide="credit-card" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-purple-800 to-pink-700 bg-clip-text text-transparent">
+                            SISTEM CETAK KARTA
+                        </h1>
+                        <span class="px-2 py-0.5 text-[11px] font-bold bg-purple-100 text-purple-700 rounded-full border border-purple-200">
+                            GO-POSITIF
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-600">Kartu Akses & Rekam Terpadu Warga • Desa Gonoharjo, Kec. Limbangan</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex items-center gap-2 bg-purple-100/70 p-1 rounded-xl border border-purple-200/80 w-full sm:w-auto justify-center">
+                <button onclick="switchTab('generate')" id="tab-btn-generate" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-white text-purple-800 shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>Generate & Desain Kartu</span>
+                </button>
+                <button onclick="switchTab('database')" id="tab-btn-database" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-purple-800">
+                    <i data-lucide="table" class="w-4 h-4"></i>
+                    <span>Data Warga & Cetak Ulang</span>
+                    <span id="badge-count" class="ml-1 px-1.5 py-0.2 text-[10px] bg-purple-600 text-white rounded-full">1</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+
+        <!-- TAB 1: GENERATE & PREVIEW KARTU -->
+        <div id="view-generate" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left Column: Form Input Data Keluarga (6 Cols) -->
+            <div class="lg:col-span-6 space-y-5 no-print">
+                
+                <!-- Banner Mode Edit Data Warga -->
+                <div id="edit-mode-banner" class="hidden bg-amber-50 border border-amber-300 rounded-2xl p-4 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-amber-100 text-amber-700 rounded-lg">
+                            <i data-lucide="edit-3" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-amber-900">Mode Edit Data Kartu: <span id="edit-mode-id">GP-0001</span></h3>
+                            <p class="text-xs text-amber-700">Perubahan akan langsung memperbarui kartu dan database warga.</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="resetFormToNew()" class="px-3 py-1.5 text-xs font-bold bg-white border border-amber-300 text-amber-800 rounded-lg hover:bg-amber-100">
+                        Batal Edit / Baru
+                    </button>
+                </div>
+
+                <!-- Card Form Utama -->
+                <form id="karta-form" onsubmit="saveKartaData(event)" class="glass-panel rounded-2xl p-5 sm:p-6 space-y-5">
+                    <div class="flex items-center justify-between border-b border-purple-100 pb-3">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="file-text" class="w-5 h-5 text-purple-600"></i>
+                            Data Identitas Kepala Keluarga
+                        </h2>
+                        <span class="text-xs font-semibold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200">
+                            Format ID: GP-XXXX
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">ID Kartu KARTA *</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="input-id" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm font-bold uppercase rounded-xl border border-purple-200 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="GP-0001">
+                                <button type="button" onclick="generateNextId()" title="Generate ID Otomatis" class="px-3 py-2 bg-purple-100 text-purple-700 rounded-xl hover:bg-purple-200 text-xs font-bold">
+                                    Auto
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Wilayah Posyandu *</label>
+                            <select id="input-posyandu" onchange="updateLivePreview()" class="w-full px-3.5 py-2 text-sm rounded-xl border border-purple-200 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                                <option value="POSYANDU DESA GONOHARJO">POSYANDU DESA GONOHARJO</option>
+                                <option value="POSYANDU KRAJAN">POSYANDU KRAJAN</option>
+                                <option value="POSYANDU NGLIMUT">POSYANDU NGLIMUT</option>
+                                <option value="POSYANDU KEMLOKO">POSYANDU KEMLOKO</option>
+                                <option value="POSYANDU TEMPURAN">POSYANDU TEMPURAN</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Kepala Keluarga *</label>
+                        <input type="text" id="input-kk" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm font-semibold uppercase rounded-xl border border-purple-200 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Contoh: BUDI SANTOSO">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Dusun / Jalan *</label>
+                            <input type="text" id="input-dusun" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm uppercase rounded-xl border border-purple-200 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="DUSUN KRAJAN">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">RT / RW *</label>
+                            <input type="text" id="input-rtrw" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm uppercase rounded-xl border border-purple-200 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="RT 02 / RW 01">
+                        </div>
+                    </div>
+
+                    <!-- PIN Default Akses Web dengan Ikon Mata -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">PIN Default Akses Web Sasaran *</label>
+                        <div class="relative">
+                            <input type="password" id="input-pin" value="123456" oninput="updateLivePreview()" class="w-full pl-3.5 pr-11 py-2 text-sm font-bold tracking-widest rounded-xl border border-purple-200 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Masukkan 6 digit PIN">
+                            <button type="button" onclick="togglePinVisibility()" id="btn-toggle-pin" title="Tampilkan / Sembunyikan PIN" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-purple-700 rounded-lg">
+                                <i data-lucide="eye" id="icon-pin-eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1">Klik ikon mata untuk mengecek PIN. Di kartu tercetak tetap disamarkan (******) demi keamanan.</p>
+                    </div>
+
+                    <!-- Daftar Anggota Keluarga -->
+                    <div class="pt-3 border-t border-purple-100">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                                    <i data-lucide="users" class="w-4 h-4 text-pink-600"></i>
+                                    Daftar Anggota Keluarga
+                                </h3>
+                                <p class="text-[11px] text-slate-500">5 Kategori Utama + Sinkron Otomatis Kategori Web Kader</p>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="promptAddCustomCategory()" class="px-2.5 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-xl text-xs font-bold flex items-center gap-1 transition" title="Tambah Kategori Baru">
+                                    <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
+                                    + Kategori
+                                </button>
+                                <button type="button" onclick="addMemberRow()" class="px-3 py-1.5 bg-pink-100 hover:bg-pink-200 text-pink-800 rounded-xl text-xs font-bold flex items-center gap-1 transition">
+                                    <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+                                    + Anggota
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="members-container" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                            <!-- Dynamic Member Rows -->
+                        </div>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="pt-4 border-t border-purple-100 flex flex-wrap gap-3">
+                        <button type="submit" class="flex-1 btn-jewel text-white font-bold py-3 px-5 rounded-xl text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            <span id="btn-submit-text">Simpan ke Database & Siapkan Cetak</span>
+                        </button>
+                        <button type="button" onclick="prepareAndPrint()" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-md transition">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Cetak</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Accordion: Unggah Background & Logo Asli -->
+                <details class="glass-panel rounded-2xl p-4 sm:p-5 group">
+                    <summary class="font-bold text-sm text-slate-800 cursor-pointer flex items-center justify-between list-none">
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="image" class="w-4 h-4 text-purple-600"></i>
+                            Pengaturan File Background & Logo Asli
+                        </span>
+                        <span class="text-xs text-purple-600 font-semibold group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <div class="mt-4 pt-3 border-t border-purple-100 space-y-3 text-xs">
+                        <p class="text-slate-600">Unggah file gambar asli (`BG KARTU.jpeg`, `BG KARTU 2.jpeg`, Logo Desa Gonoharjo, dan Logo Posyandu) agar tersimpan otomatis di browser:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="p-2.5 bg-white/80 rounded-xl border border-purple-100">
+                                <label class="font-bold text-slate-700 block mb-1">1. Background Sisi Depan</label>
+                                <input type="file" accept="image/*" onchange="handleAssetUpload(event, 'bgFront')" class="w-full text-[11px]">
+                            </div>
+                            <div class="p-2.5 bg-white/80 rounded-xl border border-purple-100">
+                                <label class="font-bold text-slate-700 block mb-1">2. Background Sisi Belakang</label>
+                                <input type="file" accept="image/*" onchange="handleAssetUpload(event, 'bgBack')" class="w-full text-[11px]">
+                            </div>
+                            <div class="p-2.5 bg-white/80 rounded-xl border border-purple-100">
+                                <label class="font-bold text-slate-700 block mb-1">3. Logo Desa Gonoharjo (Kiri)</label>
+                                <input type="file" accept="image/*" onchange="handleAssetUpload(event, 'logoDesa')" class="w-full text-[11px]">
+                            </div>
+                            <div class="p-2.5 bg-white/80 rounded-xl border border-purple-100">
+                                <label class="font-bold text-slate-700 block mb-1">4. Logo Posyandu (Kanan)</label>
+                                <input type="file" accept="image/*" onchange="handleAssetUpload(event, 'logoPosyandu')" class="w-full text-[11px]">
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="button" onclick="resetCustomAssets()" class="text-rose-600 hover:underline font-semibold">Reset ke Desain Bawaan</button>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Right Column: Live Card Preview & Two Separate Modes (6 Cols) -->
+            <div class="lg:col-span-6 space-y-4">
+                
+                <!-- Control Bar: 2 Tombol Terpisah (Atur Tata Letak & Mode Edit Isi Tulisan) + Print -->
+                <div class="glass-panel rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 no-print">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Tombol 1: Atur Tata Letak -->
+                        <button type="button" id="btn-mode-layout" onclick="toggleStudioMode('layout')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300">
+                            <i data-lucide="move" class="w-3.5 h-3.5"></i>
+                            <span id="lbl-mode-layout">Atur Tata Letak</span>
+                        </button>
+
+                        <!-- Tombol 2: Mode Edit Isi Tulisan -->
+                        <button type="button" id="btn-mode-text" onclick="toggleStudioMode('text')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300">
+                            <i data-lucide="type" class="w-3.5 h-3.5"></i>
+                            <span id="lbl-mode-text">Mode Edit Isi Tulisan</span>
+                        </button>
+                    </div>
+
+                    <button type="button" onclick="prepareAndPrint()" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                        <span>Print Kartu</span>
+                    </button>
+                </div>
+
+                <!-- PANEL 1: STUDIO ATUR TATA LETAK (DRAG & DROP + FONT/SKALA) -->
+                <div id="panel-mode-layout" class="hidden glass-panel rounded-2xl p-4 sm:p-5 border-2 border-amber-400 bg-amber-50/50 space-y-4 no-print">
+                    <div class="flex items-center justify-between border-b border-amber-200 pb-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+                            <h3 class="text-xs sm:text-sm font-extrabold text-amber-950">MODE ATUR TATA LETAK: Seret (Drag) atau Klik Elemen Kartu</h3>
+                        </div>
+                        <button type="button" onclick="resetAllLayout()" class="text-[11px] font-bold text-rose-700 hover:underline flex items-center gap-1">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            Reset Posisi
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-2 bg-white/90 px-3 py-2 rounded-xl border border-amber-200">
+                        <span class="text-xs font-bold text-slate-600">Elemen Dipilih: <strong id="sel-layout-name" class="text-amber-700">Klik elemen pada kartu...</strong></span>
+                        <div class="flex items-center gap-1">
+                            <button type="button" onclick="nudgeElement(0, -0.5)" title="Geser Atas" class="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg"><i data-lucide="arrow-up" class="w-3.5 h-3.5"></i></button>
+                            <button type="button" onclick="nudgeElement(0, 0.5)" title="Geser Bawah" class="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg"><i data-lucide="arrow-down" class="w-3.5 h-3.5"></i></button>
+                            <button type="button" onclick="nudgeElement(-0.5, 0)" title="Geser Kiri" class="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg"><i data-lucide="arrow-left" class="w-3.5 h-3.5"></i></button>
+                            <button type="button" onclick="nudgeElement(0.5, 0)" title="Geser Kanan" class="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg"><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Jenis Huruf (Font)</label>
+                            <select id="ctrl-font-family" onchange="updateSelectedStyle('fontFamily', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-amber-200 bg-white font-semibold">
+                                <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+                                <option value="'Poppins', sans-serif">Poppins</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Inter', sans-serif">Inter</option>
+                                <option value="Georgia, serif">Serif Klasik</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between font-bold text-slate-700 mb-1">
+                                <span>Ukuran / Skala</span>
+                                <span id="ctrl-scale-label">100%</span>
+                            </div>
+                            <input type="range" id="ctrl-scale" min="60" max="150" step="2" value="100" oninput="updateSelectedStyle('scale', this.value)" class="w-full accent-amber-600">
+                        </div>
+
+                        <div class="flex items-end gap-2">
+                            <div class="flex-1">
+                                <label class="block font-bold text-slate-700 mb-1">Warna Teks</label>
+                                <input type="color" id="ctrl-color" value="#ffffff" onchange="updateSelectedStyle('color', this.value)" class="w-full h-8 rounded-lg cursor-pointer border border-amber-200 bg-white">
+                            </div>
+                            <button type="button" onclick="toggleSelectedBold()" class="px-3 h-8 bg-white border border-amber-200 hover:bg-amber-100 rounded-lg font-extrabold text-slate-800" title="Tebal / Normal">
+                                B
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 2: STUDIO EDIT ISI TULISAN (SISI DEPAN & BELAKANG KECUALI NAMA, ALAMAT, QR & ID) -->
+                <div id="panel-mode-text" class="hidden glass-panel rounded-2xl p-4 sm:p-5 border-2 border-sky-400 bg-sky-50/50 space-y-3 no-print">
+                    <div class="flex items-center justify-between border-b border-sky-200 pb-2">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="edit-2" class="w-4 h-4 text-sky-700"></i>
+                            <h3 class="text-xs sm:text-sm font-extrabold text-sky-950">MODE EDIT ISI TULISAN (Sisi Depan & Belakang)</h3>
+                        </div>
+                        <span class="text-[11px] font-semibold text-sky-800 bg-sky-100 px-2 py-0.5 rounded-md">Nama, Alamat, QR & ID terkunci dari Form</span>
+                    </div>
+
+                    <p class="text-xs text-slate-600">Klik teks yang ditandai garis biru pada kartu (seperti Watermark, Judul, Subjudul, Pemdes, Posyandu, Panduan Penggunaan, atau No. WhatsApp Layanan) untuk mengubah isinya:</p>
+
+                    <div class="bg-white/95 p-3 rounded-xl border border-sky-200 space-y-2">
+                        <div class="text-xs font-bold text-slate-700">
+                            Bagian Teks Dipilih: <span id="sel-text-name" class="text-sky-700">Klik tulisan pada kartu...</span>
+                        </div>
+                        <textarea id="ctrl-text-content" rows="3" oninput="updateSelectedText(this.value)" class="w-full px-3 py-2 text-xs rounded-xl border border-sky-300 bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none" placeholder="Pilih elemen tulisan pada kartu untuk mengedit isinya (tekan Enter untuk baris baru)..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Preview Container -->
+                <div class="glass-panel rounded-2xl p-5 sm:p-6">
+                    <div id="print-area" class="flex flex-col items-center gap-6">
+                        
+                        <!-- ==================== KARTU SISI DEPAN ==================== -->
+                        <div class="w-full flex flex-col items-center">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-purple-800 mb-1.5 no-print">Sisi Depan Kartu</span>
+                            <div id="card-front" class="karta-wrapper karta-bg-default-front">
+                                <img id="img-bg-front" class="hidden absolute inset-0 w-full h-full object-cover z-0 pointer-events-none" alt="BG Depan">
+                                
+                                <svg id="svg-bg-front" class="absolute inset-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 856 540" preserveAspectRatio="none">
+                                    <path d="M530,0 C620,90 760,60 856,160 L856,0 Z" fill="#1b8a8f" opacity="0.55"/>
+                                    <path d="M0,260 C55,340 40,460 220,540 L0,540 Z" fill="#1b8a8f" opacity="0.8"/>
+                                    <path d="M0,330 C45,400 70,485 245,540 L215,540 C55,480 35,395 0,345 Z" fill="#d4af37"/>
+                                    <rect x="330" y="490" width="526" height="50" fill="url(#batikGrad)" opacity="0.45"/>
+                                    <path d="M320,515 L830,515 L830,360" fill="none" stroke="#d4af37" stroke-width="3" opacity="0.7"/>
+                                    <path d="M320,523 L838,523 L838,360" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>
+                                    <defs>
+                                        <linearGradient id="batikGrad" x1="0" y1="0" x2="1" y2="0">
+                                            <stop offset="0%" stop-color="#0d3b54" stop-opacity="0"/>
+                                            <stop offset="50%" stop-color="#b48a3e" stop-opacity="0.6"/>
+                                            <stop offset="100%" stop-color="#8c6222" stop-opacity="0.9"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+
+                                <!-- 1. Top Watermark (Editable Text) -->
+                                <div id="el-f-watermark" data-label="Watermark Atas (Depan)" data-text-editable="true" class="draggable-el text-center" style="top: 2.5%; left: 35%; width: 30%;">
+                                    <span class="c-watermark text-white/85 font-medium tracking-wide editable-target">@KreasiCahNdeso</span>
+                                </div>
+
+                                <!-- 2. Logo Desa Gonoharjo (Editable Text Label) -->
+                                <div id="el-f-logodesa" data-label="Logo & Teks Pemdes Gonoharjo" data-text-editable="true" class="draggable-el flex flex-col items-center" style="top: 7%; left: 4.5%; width: 19%;">
+                                    <div class="w-[13cqw] h-[13cqw] rounded-full bg-white/10 flex items-center justify-center overflow-hidden shadow-md border border-amber-300/40 pointer-events-none">
+                                        <img id="img-logo-desa" class="hidden w-full h-full object-contain" alt="Logo Desa">
+                                        <svg id="svg-logo-desa" viewBox="0 0 100 100" class="w-full h-full">
+                                            <circle cx="50" cy="50" r="47" fill="#10375c" stroke="#eab308" stroke-width="4"/>
+                                            <circle cx="50" cy="50" r="36" fill="#38bdf8" stroke="#eab308" stroke-width="2"/>
+                                            <path d="M18,62 L42,35 L65,62 Z" fill="#15803d"/>
+                                            <path d="M45,62 L68,30 L85,62 Z" fill="#166534"/>
+                                            <rect x="36" y="52" width="28" height="16" fill="#b45309"/>
+                                            <polygon points="32,52 50,40 68,52" fill="#78350f"/>
+                                            <rect x="26" y="70" width="48" height="10" rx="4" fill="#dc2626"/>
+                                            <text x="50" y="77" font-size="6.5" fill="white" font-weight="bold" text-anchor="middle">GONOHARJO</text>
+                                        </svg>
+                                    </div>
+                                    <div class="c-pemdes font-bold text-center mt-[0.8cqw] editable-target">Pemdes<br>Gonoharjo</div>
+                                </div>
+
+                                <!-- 3. Center Title KARTA (Editable Text) -->
+                                <div id="el-f-title" data-label="Judul & Subjudul KARTA" data-text-editable="true" class="draggable-el text-center" style="top: 11%; left: 23.5%; width: 52%;">
+                                    <div class="editable-target">
+                                        <h2 class="c-title font-extrabold">KARTA</h2>
+                                        <p class="c-subtitle font-medium mt-[0.8cqw] tracking-tight">(Kartu Akses & Rekam Terpadu Warga)</p>
+                                    </div>
+                                </div>
+
+                                <!-- 4. Logo Posyandu (Editable Text Label) -->
+                                <div id="el-f-logopos" data-label="Logo & Teks Posyandu" data-text-editable="true" class="draggable-el flex flex-col items-center" style="top: 7.5%; left: 75.5%; width: 20.5%;">
+                                    <div class="w-[12.2cqw] h-[12.2cqw] rounded-full bg-white/10 flex items-center justify-center overflow-hidden pointer-events-none">
+                                        <img id="img-logo-posyandu" class="hidden w-full h-full object-contain" alt="Logo Posyandu">
+                                        <svg id="svg-logo-posyandu" viewBox="0 0 100 100" class="w-full h-full">
+                                            <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#16a34a" stroke-width="3"/>
+                                            <path d="M25,65 C25,45 45,45 50,65 C55,45 75,45 75,65 C75,80 50,88 50,88 C50,88 25,80 25,65 Z" fill="#15803d"/>
+                                            <circle cx="50" cy="34" r="11" fill="#f97316"/>
+                                            <circle cx="33" cy="42" r="8" fill="#eab308"/>
+                                            <circle cx="67" cy="42" r="8" fill="#22c55e"/>
+                                        </svg>
+                                    </div>
+                                    <div id="prev-posyandu-name" class="c-posyandu-title font-extrabold text-center mt-[0.7cqw] uppercase editable-target">
+                                        POSYANDU<br><span class="c-posyandu-sub font-semibold">DESA GONOHARJO</span>
+                                    </div>
+                                </div>
+
+                                <!-- 5. QR Code & ID (LOCKED FROM TEXT EDIT - From Form) -->
+                                <div id="el-f-qr" data-label="QR Code & ID KARTA (Terkunci dari Form)" data-text-editable="false" class="draggable-el flex flex-col items-center" style="top: 42%; left: 6.5%; width: 24%;">
+                                    <div class="bg-white p-[1.3cqw] rounded-[1.5cqw] shadow-lg pointer-events-none">
+                                        <div id="qrcode-container" class="w-[17.5cqw] h-[17.5cqw] flex items-center justify-center"></div>
+                                    </div>
+                                    <div id="prev-id-text" class="c-id-text font-extrabold mt-[1cqw] tracking-wider">GP-0001</div>
+                                </div>
+
+                                <!-- 6. Data Box Nama & Alamat (LOCKED FROM TEXT EDIT - From Form) -->
+                                <div id="el-f-databox" data-label="Kotak Nama & Alamat (Terkunci dari Form)" data-text-editable="false" class="draggable-el bg-[#082f42]/75 border border-teal-400/25 rounded-[2.2cqw] p-[2.5cqw] shadow-inner" style="top: 43.5%; left: 34.5%; width: 59%;">
+                                    <div class="mb-[1.3cqw]">
+                                        <div class="c-label font-medium">nama:</div>
+                                        <div id="prev-kk-name" class="c-value-name font-extrabold uppercase tracking-wide truncate">BUDI SANTOSO</div>
+                                    </div>
+                                    <div>
+                                        <div class="c-label font-medium">alamat:</div>
+                                        <div id="prev-alamat" class="c-value-addr font-bold uppercase">DUSUN KRAJAN, RT 02 / RW 01</div>
+                                    </div>
+                                </div>
+
+                                <!-- 7. Bottom Footer Front (Editable Text) -->
+                                <div id="el-f-footer" data-label="Footer Sisi Depan" data-text-editable="true" class="draggable-el pt-[0.7cqw] border-t border-white/60 flex items-center justify-between" style="top: 90%; left: 4.5%; width: 91%;">
+                                    <span class="c-footer font-medium editable-target">Copyright @KreasiCahNdeso</span>
+                                    <span class="c-footer font-semibold">Gonoharjo, Limbangan - Kab. KENDAL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== KARTU SISI BELAKANG ==================== -->
+                        <div class="w-full flex flex-col items-center">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-purple-800 mb-1.5 no-print">Sisi Belakang Kartu</span>
+                            <div id="card-back" class="karta-wrapper karta-bg-default-back">
+                                <img id="img-bg-back" class="hidden absolute inset-0 w-full h-full object-cover z-0 pointer-events-none" alt="BG Belakang">
+
+                                <svg id="svg-bg-back" class="absolute inset-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 856 540" preserveAspectRatio="none">
+                                    <path d="M620,0 C740,55 805,150 856,260 L856,0 Z" fill="#1b8a8f" opacity="0.8"/>
+                                    <path d="M590,0 C725,50 795,140 856,230 L856,205 C795,120 730,40 615,0 Z" fill="#d4af37"/>
+                                    <path d="M0,250 C45,350 40,460 120,540 L0,540 Z" fill="#1b8a8f" opacity="0.75"/>
+                                    <path d="M0,280 C38,365 35,465 100,540 L85,540 C25,465 28,365 0,295 Z" fill="#d4af37"/>
+                                    <rect x="0" y="495" width="856" height="45" fill="#7c5822" opacity="0.35"/>
+                                </svg>
+
+                                <!-- 1. Top Watermark Back -->
+                                <div id="el-b-watermark" data-label="Watermark Atas (Belakang)" data-text-editable="true" class="draggable-el text-center" style="top: 2.5%; left: 35%; width: 30%;">
+                                    <span class="c-watermark text-white/85 font-medium tracking-wide editable-target">@KreasiCahNdeso</span>
+                                </div>
+
+                                <!-- 2. Panduan Penggunaan -->
+                                <div id="el-b-panduan" data-label="Teks Panduan Penggunaan" data-text-editable="true" class="draggable-el" style="top: 9.5%; left: 6%; width: 88%;">
+                                    <div class="editable-target">
+                                        <h3 class="cb-heading font-extrabold tracking-wide mb-[1cqw]">PANDUAN PENGGUNAAN KARTA:</h3>
+                                        <ol class="cb-list list-decimal pl-[3.6cqw] space-y-[0.55cqw] font-medium">
+                                            <li>Kartu ini identitas resmi warga untuk pelayanan terpadu desa dan posyandu.</li>
+                                            <li>Tunjukkan kartu ini kepada petugas desa/kader posyandu untuk discan rekam data anda.</li>
+                                            <li>Akses Layanan Mandiri Online dapat dengan mengakses <strong>WEB POSYANDU</strong> dan <strong>WEB PELAYANAN DESA</strong>.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                                <!-- 3. Highlight Box ID & PIN (ID Terkunci dari Form) -->
+                                <div id="el-b-idbox" data-label="Kotak ID Akses Web & PIN (ID Terkunci)" data-text-editable="false" class="draggable-el bg-[#082f42]/82 border border-teal-300/25 rounded-[2cqw] px-[3.2cqw] py-[1.6cqw] shadow-inner" style="top: 44.5%; left: 6%; width: 88%;">
+                                    <div class="cb-box-text font-extrabold tracking-wide">
+                                        <div class="flex items-center">
+                                            <span class="w-[33%]">ID AKSES WEB</span>
+                                            <span>: <span id="prev-back-id">GP-0001</span></span>
+                                        </div>
+                                        <div class="flex items-center mt-[0.35cqw]">
+                                            <span class="w-[33%]">PIN DEFAULT</span>
+                                            <span>: <span id="prev-back-pin">******</span> <span class="font-normal cb-box-sub">(PIN default diberikan terpisah)</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="cb-box-sub font-semibold mt-[1cqw] text-teal-100">
+                                        Bisa akses melalui <strong class="text-white">WEB POSYANDU & WEB PELAYANAN DESA.</strong>
+                                    </div>
+                                </div>
+
+                                <!-- 4. Return Notice & WhatsApp Layanan KARTA (Editable in Mode Edit Isi Tulisan) -->
+                                <div id="el-b-notice" data-label="Keterangan Pengembalian & WhatsApp Layanan KARTA" data-text-editable="true" class="draggable-el text-center px-1" style="top: 68.5%; left: 5%; width: 90%;">
+                                    <div class="editable-target">
+                                        <p class="cb-notice font-medium">
+                                            Jika menemukan kartu ini, harap mengembalikan ke Balai Desa<br>
+                                            Gonoharjo/Petugas Desa Gonoharjo/Kader POSYANDU Gonoharjo.
+                                        </p>
+                                        <p class="cb-wa font-bold mt-[0.45cqw] tracking-wide">
+                                            WhatsApp Layanan KARTA : 0812-XXXX-XXXX
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- 5. Bottom Footer Back -->
+                                <div id="el-b-footer" data-label="Footer Sisi Belakang" data-text-editable="true" class="draggable-el pt-[0.7cqw] border-t border-white/60 flex items-center justify-between" style="top: 90%; left: 4.5%; width: 91%;">
+                                    <span class="c-footer font-medium editable-target">Copyright @KreasiCahNdeso</span>
+                                    <span class="c-footer font-semibold">Gonoharjo, Limbangan - Kab. KENDAL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TAB 2: DATABASE WARGA (TAMPILAN TABEL RINGKAS SIAP RIBUAN DATA) -->
+        <div id="view-database" class="hidden space-y-5 no-print">
+            
+            <!-- Filter & Search Bar -->
+            <div class="glass-panel rounded-2xl p-5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="database" class="w-5 h-5 text-purple-600"></i>
+                            Database Pemegang KARTA & Pencarian Cetak Ulang
+                        </h2>
+                        <p class="text-xs text-slate-600">Tampilan tabel ringkas untuk ribuan data warga. Klik tombol <strong>Detail & Cetak</strong> pada baris warga untuk melihat kartu, mengedit anggota/kategori, atau ekspor PNG/PDF.</p>
+                    </div>
+                    <button onclick="switchTab('generate'); resetFormToNew();" class="btn-jewel text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 self-start md:self-auto">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        Tambah KARTA Baru
+                    </button>
+                </div>
+
+                <!-- 3 Kolom Filter -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+                        <input type="text" id="filter-search" oninput="renderDatabaseTable()" placeholder="Cari ID (GP-0001) atau Nama KK..." class="w-full pl-10 pr-3.5 py-2 text-sm rounded-xl border border-purple-200 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <select id="filter-posyandu" onchange="renderDatabaseTable()" class="w-full px-3.5 py-2 text-sm rounded-xl border border-purple-200 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            <option value="">Semua Wilayah Posyandu</option>
+                            <option value="POSYANDU DESA GONOHARJO">POSYANDU DESA GONOHARJO</option>
+                            <option value="POSYANDU KRAJAN">POSYANDU KRAJAN</option>
+                            <option value="POSYANDU NGLIMUT">POSYANDU NGLIMUT</option>
+                            <option value="POSYANDU KEMLOKO">POSYANDU KEMLOKO</option>
+                            <option value="POSYANDU TEMPURAN">POSYANDU TEMPURAN</option>
+                        </select>
+                    </div>
+
+                    <div class="relative">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+                        <input type="text" id="filter-alamat" oninput="renderDatabaseTable()" placeholder="Filter Alamat / Dusun / RT..." class="w-full pl-10 pr-3.5 py-2 text-sm rounded-xl border border-purple-200 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Data Warga Ringkas -->
+            <div class="glass-panel rounded-2xl overflow-hidden border border-purple-200/80">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-purple-900 text-white text-xs uppercase tracking-wider">
+                                <th class="py-3.5 px-4 font-bold">ID KARTA</th>
+                                <th class="py-3.5 px-4 font-bold">Nama Kepala Keluarga</th>
+                                <th class="py-3.5 px-4 font-bold">Alamat</th>
+                                <th class="py-3.5 px-4 font-bold">Asal Posyandu</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="database-tbody" class="divide-y divide-purple-100 bg-white/80 text-xs sm:text-sm">
+                            <!-- Rows rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="table-footer-info" class="px-4 py-3 bg-purple-50/80 border-t border-purple-100 text-xs text-slate-600 flex justify-between items-center">
+                    <span>Menampilkan data terdaftar</span>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- MODAL DETAIL KARTU KARTA (Membuka detail isi, edit, tata letak, cetak & ekspor PNG/PDF) -->
+    <div id="detail-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto no-print">
+        <div class="bg-white rounded-3xl max-w-4xl w-full shadow-2xl border border-purple-200 overflow-hidden my-auto">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-purple-900 to-pink-800 text-white px-5 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <span id="modal-badge-id" class="px-2.5 py-1 bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg">GP-0001</span>
+                    <div>
+                        <h3 id="modal-title-kk" class="text-base font-extrabold">BUDI SANTOSO</h3>
+                        <p id="modal-sub-info" class="text-xs text-purple-100">DUSUN KRAJAN, RT 02 / RW 01 • POSYANDU DESA GONOHARJO</p>
+                    </div>
+                </div>
+                <button onclick="closeDetailModal()" class="p-2 bg-white/15 hover:bg-white/25 rounded-xl text-white transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5 sm:p-6 space-y-5 max-h-[82vh] overflow-y-auto">
+                
+                <!-- Action Toolbar di dalam Modal -->
+                <div class="flex flex-wrap items-center gap-2 bg-purple-50 p-3 rounded-2xl border border-purple-200">
+                    <button id="modal-btn-edit" class="px-3.5 py-2 bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        Edit Data & Anggota
+                    </button>
+                    <button id="modal-btn-layout" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold rounded-xl flex items-center gap-1.5 shadow-xs">
+                        <i data-lucide="move" class="w-3.5 h-3.5"></i>
+                        Atur Tata Letak & Teks Kartu
+                    </button>
+                    <button id="modal-btn-print" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                        Cetak (Print)
+                    </button>
+                    <button onclick="exportCardAsPNG()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs">
+                        <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                        Ekspor PNG
+                    </button>
+                    <button onclick="exportCardAsPDF()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs">
+                        <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                        Ekspor PDF
+                    </button>
+                </div>
+
+                <!-- Pratinjau Kartu Depan & Belakang dalam Modal -->
+                <div id="modal-card-preview-clone" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-slate-100 p-4 rounded-2xl border border-slate-200">
+                    <!-- Cloned front & back cards injected here -->
+                </div>
+
+                <!-- Rincian Anggota Keluarga & Info Akses -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 text-xs">
+                        <h4 class="font-extrabold text-slate-800 uppercase tracking-wider border-b pb-1.5">Info Akses Web Sasaran</h4>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">ID Akses Web:</span>
+                            <span id="modal-info-id" class="font-bold text-slate-900">GP-0001</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">PIN Default:</span>
+                            <span id="modal-info-pin" class="font-bold text-purple-700">123456</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Update Terakhir:</span>
+                            <span id="modal-info-date" class="font-semibold text-slate-700">2026-11-17</span>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider border-b pb-1.5 mb-2.5">
+                            Daftar Anggota Keluarga Terdaftar
+                        </h4>
+                        <div id="modal-members-list" class="space-y-1.5 max-h-40 overflow-y-auto">
+                            <!-- Members list -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold flex items-center gap-2.5 no-print">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+        <span id="toast-msg">Berhasil disimpan!</span>
+    </div>
+
+    <script>
+        // 5 Kategori Utama + Dinamis dari Web Kader / Manual
+        const BASE_CATEGORIES = [
+            "Balita",
+            "Remaja",
+            "Ibu Hamil/Menyusui",
+            "Usia Produktif",
+            "Lansia"
+        ];
+
+        const DEMO_DATA = [
+            {
+                id: "GP-0001",
+                kk: "BUDI SANTOSO",
+                dusun: "DUSUN KRAJAN",
+                rtrw: "RT 02 / RW 01",
+                posyandu: "POSYANDU DESA GONOHARJO",
+                pin: "123456",
+                updatedAt: "2026-11-17",
+                members: [
+                    { name: "BUDI SANTOSO", relation: "Kepala Keluarga", category: "Usia Produktif" },
+                    { name: "SITI AMINAH", relation: "Istri", category: "Ibu Hamil/Menyusui" },
+                    { name: "AHMAD FAUZAN", relation: "Anak ke-1", category: "Remaja" },
+                    { name: "NAYLA PUTRI", relation: "Anak ke-2", category: "Balita" }
+                ]
+            }
+        ];
+
+        const DEFAULT_LAYOUT = {
+            "el-f-watermark": { top: 2.5, left: 35, scale: 1, fontFamily: "", color: "", bold: false },
+            "el-f-logodesa":  { top: 7, left: 4.5, scale: 1, fontFamily: "", color: "", bold: true },
+            "el-f-title":     { top: 11, left: 23.5, scale: 1, fontFamily: "", color: "", bold: true },
+            "el-f-logopos":   { top: 7.5, left: 75.5, scale: 1, fontFamily: "", color: "", bold: true },
+            "el-f-qr":        { top: 42, left: 6.5, scale: 1, fontFamily: "", color: "", bold: true },
+            "el-f-databox":   { top: 43.5, left: 34.5, scale: 1, fontFamily: "", color: "", bold: true },
+            "el-f-footer":    { top: 90, left: 4.5, scale: 1, fontFamily: "", color: "", bold: false },
+            "el-b-watermark": { top: 2.5, left: 35, scale: 1, fontFamily: "", color: "", bold: false },
+            "el-b-panduan":   { top: 9.5, left: 6, scale: 1, fontFamily: "", color: "", bold: false },
+            "el-b-idbox":     { top: 44.5, left: 6, scale: 1, fontFamily: "", color: "", bold: true },
+            "el-b-notice":    { top: 68.5, left: 5, scale: 1, fontFamily: "", color: "", bold: false },
+            "el-b-footer":    { top: 90, left: 4.5, scale: 1, fontFamily: "", color: "", bold: false }
+        };
+
+        let availableCategories = [...BASE_CATEGORIES];
+        let kartaRecords = [];
+        let editingId = null;
+        let activeStudioMode = null; // null | 'layout' | 'text'
+        let selectedElId = null;
+        let layoutConfig = JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
+        let currentModalRecordId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            syncCategoriesFromKaderAndStorage();
+            loadRecords();
+            loadCustomAssets();
+            loadSavedLayout();
+            initDragAndSelect();
+
+            if (kartaRecords.length > 0) {
+                populateFormForPreviewOnly(kartaRecords[0]);
+            } else {
+                addMemberRow("BUDI SANTOSO", "Kepala Keluarga", "Usia Produktif");
+            }
+            renderDatabaseTable();
+        });
+
+        // ================= SINKRONISASI KATEGORI OTOMATIS DARI WEB KADER =================
+        function syncCategoriesFromKaderAndStorage() {
+            const customSaved = JSON.parse(localStorage.getItem("karta_custom_categories") || "[]");
+            // Cek juga apakah ada kategori baru yang dikirim dari Web Kader (shared storage key)
+            const kaderSharedCats = JSON.parse(localStorage.getItem("gopositif_kader_categories") || "[]");
+            // Cek juga dari URL parameter ?new_cat=... jika dibuka dari portal Web Kader
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlCat = urlParams.get("new_cat");
+
+            const merged = new Set([...BASE_CATEGORIES, ...customSaved, ...kaderSharedCats]);
+            if (urlCat && urlCat.trim()) {
+                merged.add(urlCat.trim());
+                customSaved.push(urlCat.trim());
+                localStorage.setItem("karta_custom_categories", JSON.stringify([...new Set(customSaved)]));
+            }
+            availableCategories = Array.from(merged);
+        }
+
+        function promptAddCustomCategory() {
+            const newCat = prompt("Masukkan nama kategori sasaran baru (akan otomatis muncul di pilihan anggota keluarga):");
+            if (!newCat || !newCat.trim()) return;
+            const cleanCat = newCat.trim();
+            if (!availableCategories.includes(cleanCat)) {
+                availableCategories.push(cleanCat);
+                const customSaved = JSON.parse(localStorage.getItem("karta_custom_categories") || "[]");
+                customSaved.push(cleanCat);
+                localStorage.setItem("karta_custom_categories", JSON.stringify(customSaved));
+                // Simpan juga ke shared key agar sinkron dengan Web Kader
+                localStorage.setItem("gopositif_kader_categories", JSON.stringify(availableCategories));
+                refreshAllCategoryDropdowns();
+                showToast(`Kategori "${cleanCat}" berhasil ditambahkan!`);
+            } else {
+                showToast("Kategori tersebut sudah ada dalam daftar.");
+            }
+        }
+
+        function refreshAllCategoryDropdowns() {
+            document.querySelectorAll(".m-cat").forEach(select => {
+                const currentVal = select.value;
+                select.innerHTML = availableCategories.map(opt => 
+                    `<option value="${opt}" ${opt === currentVal ? 'selected' : ''}>${opt}</option>`
+                ).join("");
+            });
+        }
+
+        // ================= TOGGLE MATA PIN DEFAULT =================
+        function togglePinVisibility() {
+            const pinInput = document.getElementById("input-pin");
+            const eyeIcon = document.getElementById("icon-pin-eye");
+            if (pinInput.type === "password") {
+                pinInput.type = "text";
+                eyeIcon.setAttribute("data-lucide", "eye-off");
+            } else {
+                pinInput.type = "password";
+                eyeIcon.setAttribute("data-lucide", "eye");
+            }
+            lucide.createIcons();
+        }
+
+        // ================= DUA MODE TERPISAH: ATUR TATA LETAK vs EDIT ISI TULISAN =================
+        function toggleStudioMode(mode) {
+            const body = document.body;
+            const panelLayout = document.getElementById("panel-mode-layout");
+            const panelText = document.getElementById("panel-mode-text");
+            const btnLayout = document.getElementById("btn-mode-layout");
+            const btnText = document.getElementById("btn-mode-text");
+            const lblLayout = document.getElementById("lbl-mode-layout");
+            const lblText = document.getElementById("lbl-mode-text");
+
+            // Matikan mode jika tombol yang sama diklik lagi
+            if (activeStudioMode === mode) {
+                activeStudioMode = null;
+                body.classList.remove("layout-mode-active", "text-edit-mode-active");
+                panelLayout.classList.add("hidden");
+                panelText.classList.add("hidden");
+                btnLayout.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300";
+                btnText.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300";
+                lblLayout.textContent = "Atur Tata Letak";
+                lblText.textContent = "Mode Edit Isi Tulisan";
+                clearSelectedHighlight();
+                saveLayoutToStorage();
+                showToast("Pengaturan kartu disimpan!");
+                return;
+            }
+
+            activeStudioMode = mode;
+            clearSelectedHighlight();
+
+            if (mode === "layout") {
+                body.classList.add("layout-mode-active");
+                body.classList.remove("text-edit-mode-active");
+                panelLayout.classList.remove("hidden");
+                panelText.classList.add("hidden");
+
+                btnLayout.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow bg-amber-500 text-slate-950 border border-amber-600";
+                lblLayout.textContent = "Selesai Tata Letak";
+                btnText.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300";
+                lblText.textContent = "Mode Edit Isi Tulisan";
+                showToast("Mode Atur Tata Letak Aktif: Seret elemen pada kartu.");
+            } else if (mode === "text") {
+                body.classList.add("text-edit-mode-active");
+                body.classList.remove("layout-mode-active");
+                panelText.classList.remove("hidden");
+                panelLayout.classList.add("hidden");
+
+                btnText.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow bg-sky-600 text-white border border-sky-700";
+                lblText.textContent = "Selesai Edit Tulisan";
+                btnLayout.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300";
+                lblLayout.textContent = "Atur Tata Letak";
+                showToast("Mode Edit Tulisan Aktif: Klik teks berbingkai biru pada kartu.");
+            }
+        }
+
+        function initDragAndSelect() {
+            const draggables = document.querySelectorAll(".draggable-el");
+            draggables.forEach(el => {
+                el.addEventListener("pointerdown", (e) => {
+                    if (!activeStudioMode) return;
+                    e.stopPropagation();
+
+                    if (activeStudioMode === "text") {
+                        const isTextEditable = el.getAttribute("data-text-editable") === "true";
+                        if (!isTextEditable) {
+                            showToast("Bagian Nama, Alamat, QR & ID hanya diubah lewat Form Identitas KK.");
+                            return;
+                        }
+                        selectElementForEdit(el.id);
+                        return;
+                    }
+
+                    // Mode Layout: Drag & Drop
+                    selectElementForEdit(el.id);
+                    const parent = el.parentElement;
+                    const parentRect = parent.getBoundingClientRect();
+                    const startX = e.clientX;
+                    const startY = e.clientY;
+                    const origLeftPct = parseFloat(el.style.left) || 0;
+                    const origTopPct = parseFloat(el.style.top) || 0;
+
+                    el.setPointerCapture(e.pointerId);
+
+                    const onPointerMove = (moveEvt) => {
+                        const dxPct = ((moveEvt.clientX - startX) / parentRect.width) * 100;
+                        const dyPct = ((moveEvt.clientY - startY) / parentRect.height) * 100;
+
+                        const newLeft = Math.max(-5, Math.min(92, origLeftPct + dxPct));
+                        const newTop = Math.max(0, Math.min(94, origTopPct + dyPct));
+
+                        el.style.left = newLeft.toFixed(2) + "%";
+                        el.style.top = newTop.toFixed(2) + "%";
+
+                        if (!layoutConfig[el.id]) layoutConfig[el.id] = { scale: 1 };
+                        layoutConfig[el.id].left = parseFloat(newLeft.toFixed(2));
+                        layoutConfig[el.id].top = parseFloat(newTop.toFixed(2));
+                    };
+
+                    const onPointerUp = () => {
+                        el.removeEventListener("pointermove", onPointerMove);
+                        el.removeEventListener("pointerup", onPointerUp);
+                        saveLayoutToStorage();
+                    };
+
+                    el.addEventListener("pointermove", onPointerMove);
+                    el.addEventListener("pointerup", onPointerUp);
+                });
+            });
+        }
+
+        function clearSelectedHighlight() {
+            document.querySelectorAll(".draggable-el").forEach(el => el.classList.remove("selected-el"));
+            selectedElId = null;
+        }
+
+        function selectElementForEdit(elId) {
+            clearSelectedHighlight();
+            selectedElId = elId;
+            const el = document.getElementById(elId);
+            if (!el) return;
+            el.classList.add("selected-el");
+
+            const label = el.getAttribute("data-label") || elId;
+            document.getElementById("sel-layout-name").textContent = label;
+            document.getElementById("sel-text-name").textContent = label;
+
+            const cfg = layoutConfig[elId] || { scale: 1, fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#ffffff" };
+            const scalePct = Math.round((cfg.scale || 1) * 100);
+            document.getElementById("ctrl-scale").value = scalePct;
+            document.getElementById("ctrl-scale-label").textContent = scalePct + "%";
+            document.getElementById("ctrl-font-family").value = cfg.fontFamily || "'Plus Jakarta Sans', sans-serif";
+            if (cfg.color) document.getElementById("ctrl-color").value = cfg.color;
+
+            if (el.getAttribute("data-text-editable") === "true") {
+                const target = el.querySelector(".editable-target") || el;
+                document.getElementById("ctrl-text-content").value = target.innerText.trim();
+            }
+        }
+
+        function nudgeElement(dx, dy) {
+            if (!selectedElId) return showToast("Klik salah satu elemen di kartu terlebih dahulu!");
+            const el = document.getElementById(selectedElId);
+            const curLeft = parseFloat(el.style.left) || 0;
+            const curTop = parseFloat(el.style.top) || 0;
+            const newLeft = parseFloat((curLeft + dx).toFixed(2));
+            const newTop = parseFloat((curTop + dy).toFixed(2));
+            el.style.left = newLeft + "%";
+            el.style.top = newTop + "%";
+            layoutConfig[selectedElId].left = newLeft;
+            layoutConfig[selectedElId].top = newTop;
+            saveLayoutToStorage();
+        }
+
+        function updateSelectedStyle(prop, val) {
+            if (!selectedElId) return showToast("Klik elemen di kartu terlebih dahulu!");
+            const el = document.getElementById(selectedElId);
+            if (!layoutConfig[selectedElId]) layoutConfig[selectedElId] = {};
+
+            if (prop === "scale") {
+                const scaleNum = parseFloat(val) / 100;
+                el.style.transform = `scale(${scaleNum})`;
+                el.style.transformOrigin = "top center";
+                document.getElementById("ctrl-scale-label").textContent = val + "%";
+                layoutConfig[selectedElId].scale = scaleNum;
+            } else if (prop === "fontFamily") {
+                el.style.fontFamily = val;
+                layoutConfig[selectedElId].fontFamily = val;
+            } else if (prop === "color") {
+                el.style.color = val;
+                el.querySelectorAll("*").forEach(child => child.style.color = val);
+                layoutConfig[selectedElId].color = val;
+            }
+            saveLayoutToStorage();
+        }
+
+        function toggleSelectedBold() {
+            if (!selectedElId) return showToast("Klik elemen di kartu terlebih dahulu!");
+            const el = document.getElementById(selectedElId);
+            const nextBold = !layoutConfig[selectedElId]?.bold;
+            el.style.fontWeight = nextBold ? "800" : "500";
+            el.querySelectorAll("*").forEach(child => child.style.fontWeight = nextBold ? "800" : "500");
+            layoutConfig[selectedElId].bold = nextBold;
+            saveLayoutToStorage();
+        }
+
+        function updateSelectedText(val) {
+            if (!selectedElId) return;
+            const el = document.getElementById(selectedElId);
+            if (el.getAttribute("data-text-editable") !== "true") return;
+            const target = el.querySelector(".editable-target") || el;
+            target.innerHTML = val.replace(/\n/g, "<br>");
+            layoutConfig[selectedElId].customHtml = target.innerHTML;
+            saveLayoutToStorage();
+        }
+
+        function saveLayoutToStorage() {
+            localStorage.setItem("karta_gonoharjo_layout_v3", JSON.stringify(layoutConfig));
+        }
+
+        function loadSavedLayout() {
+            const saved = localStorage.getItem("karta_gonoharjo_layout_v3");
+            if (!saved) return;
+            try {
+                layoutConfig = JSON.parse(saved);
+                Object.keys(layoutConfig).forEach(elId => {
+                    const el = document.getElementById(elId);
+                    const cfg = layoutConfig[elId];
+                    if (!el || !cfg) return;
+                    if (cfg.top !== undefined) el.style.top = cfg.top + "%";
+                    if (cfg.left !== undefined) el.style.left = cfg.left + "%";
+                    if (cfg.scale && cfg.scale !== 1) {
+                        el.style.transform = `scale(${cfg.scale})`;
+                        el.style.transformOrigin = "top center";
+                    }
+                    if (cfg.fontFamily) el.style.fontFamily = cfg.fontFamily;
+                    if (cfg.color) {
+                        el.style.color = cfg.color;
+                        el.querySelectorAll("*").forEach(c => c.style.color = cfg.color);
+                    }
+                    if (cfg.customHtml && el.getAttribute("data-text-editable") === "true") {
+                        const target = el.querySelector(".editable-target") || el;
+                        target.innerHTML = cfg.customHtml;
+                    }
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function resetAllLayout() {
+            localStorage.removeItem("karta_gonoharjo_layout_v3");
+            location.reload();
+        }
+
+        function prepareAndPrint() {
+            if (activeStudioMode) toggleStudioMode(activeStudioMode);
+            window.print();
+        }
+
+        // ================= STORAGE & FORM DATA =================
+        function loadRecords() {
+            const saved = localStorage.getItem("karta_gonoharjo_db_v3");
+            if (saved) {
+                kartaRecords = JSON.parse(saved);
+            } else {
+                kartaRecords = [...DEMO_DATA];
+                saveRecordsToStorage();
+            }
+            updateBadgeCount();
+        }
+
+        function saveRecordsToStorage() {
+            localStorage.setItem("karta_gonoharjo_db_v3", JSON.stringify(kartaRecords));
+            updateBadgeCount();
+        }
+
+        function updateBadgeCount() {
+            document.getElementById("badge-count").textContent = kartaRecords.length;
+        }
+
+        function switchTab(tabName) {
+            const viewGen = document.getElementById("view-generate");
+            const viewDb = document.getElementById("view-database");
+            const btnGen = document.getElementById("tab-btn-generate");
+            const btnDb = document.getElementById("tab-btn-database");
+
+            if (tabName === "generate") {
+                viewGen.classList.remove("hidden");
+                viewDb.classList.add("hidden");
+                btnGen.className = "flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-white text-purple-800 shadow-sm";
+                btnDb.className = "flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-purple-800";
+            } else {
+                viewGen.classList.add("hidden");
+                viewDb.classList.remove("hidden");
+                btnDb.className = "flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-white text-purple-800 shadow-sm";
+                btnGen.className = "flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-purple-800";
+                renderDatabaseTable();
+            }
+        }
+
+        function addMemberRow(name = "", relation = "Anggota", category = "Balita") {
+            const container = document.getElementById("members-container");
+            const row = document.createElement("div");
+            row.className = "member-row bg-purple-50/70 border border-purple-200/80 rounded-xl p-2.5 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center";
+
+            // Pastikan kategori lama atau baru tetap terpilih
+            const listCats = availableCategories.includes(category) ? availableCategories : [...availableCategories, category];
+            const optionsHtml = listCats.map(opt => 
+                `<option value="${opt}" ${opt === category ? 'selected' : ''}>${opt}</option>`
+            ).join("");
+
+            row.innerHTML = `
+                <div class="sm:col-span-5">
+                    <input type="text" class="m-name w-full px-2.5 py-1.5 text-xs font-semibold uppercase rounded-lg border border-purple-200 bg-white" placeholder="Nama Lengkap Anggota" value="${name}" required>
+                </div>
+                <div class="sm:col-span-3">
+                    <input type="text" class="m-rel w-full px-2 py-1.5 text-xs rounded-lg border border-purple-200 bg-white" placeholder="Status Keluarga" value="${relation}">
+                </div>
+                <div class="sm:col-span-3">
+                    <select class="m-cat w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-purple-200 bg-white">
+                        ${optionsHtml}
+                    </select>
+                </div>
+                <div class="sm:col-span-1 flex justify-end">
+                    <button type="button" onclick="this.closest('.member-row').remove()" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Anggota">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(row);
+            lucide.createIcons();
+        }
+
+        function populateFormForPreviewOnly(record) {
+            document.getElementById("input-id").value = record.id;
+            document.getElementById("input-kk").value = record.kk;
+            document.getElementById("input-dusun").value = record.dusun;
+            document.getElementById("input-rtrw").value = record.rtrw;
+            document.getElementById("input-posyandu").value = record.posyandu;
+            document.getElementById("input-pin").value = record.pin || "123456";
+
+            const container = document.getElementById("members-container");
+            container.innerHTML = "";
+            record.members.forEach(m => addMemberRow(m.name, m.relation, m.category));
+
+            updateLivePreview();
+        }
+
+        function loadRecordForEdit(id, openStudioAfter = false) {
+            const record = kartaRecords.find(r => r.id === id);
+            if (!record) return;
+
+            closeDetailModal();
+            editingId = record.id;
+            populateFormForPreviewOnly(record);
+
+            document.getElementById("edit-mode-banner").classList.remove("hidden");
+            document.getElementById("edit-mode-id").textContent = record.id;
+            document.getElementById("btn-submit-text").textContent = "Simpan Perubahan Data";
+            
+            switchTab("generate");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            
+            if (openStudioAfter) {
+                if (activeStudioMode !== "layout") toggleStudioMode("layout");
+            } else {
+                showToast(`Memuat data ${record.id} (${record.kk}) untuk diedit`);
+            }
+        }
+
+        function resetFormToNew() {
+            editingId = null;
+            document.getElementById("edit-mode-banner").classList.add("hidden");
+            document.getElementById("btn-submit-text").textContent = "Simpan ke Database & Siapkan Cetak";
+            
+            generateNextId();
+            document.getElementById("input-kk").value = "";
+            document.getElementById("input-dusun").value = "DUSUN KRAJAN";
+            document.getElementById("input-rtrw").value = "RT 01 / RW 01";
+            document.getElementById("input-pin").value = "123456";
+            
+            const container = document.getElementById("members-container");
+            container.innerHTML = "";
+            addMemberRow("", "Kepala Keluarga", "Usia Produktif");
+            
+            updateLivePreview();
+        }
+
+        function generateNextId() {
+            let maxNum = 0;
+            kartaRecords.forEach(r => {
+                const match = r.id.match(/GP-(\d+)/i);
+                if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num > maxNum) maxNum = num;
+                }
+            });
+            const nextId = "GP-" + String(maxNum + 1).padStart(4, "0");
+            document.getElementById("input-id").value = nextId;
+            updateLivePreview();
+        }
+
+        function updateLivePreview() {
+            const idVal = (document.getElementById("input-id").value || "GP-0001").toUpperCase();
+            const kkVal = (document.getElementById("input-kk").value || "NAMA KEPALA KELUARGA").toUpperCase();
+            const dusunVal = (document.getElementById("input-dusun").value || "DUSUN KRAJAN").toUpperCase();
+            const rtrwVal = (document.getElementById("input-rtrw").value || "RT 02 / RW 01").toUpperCase();
+            const posyanduVal = (document.getElementById("input-posyandu").value || "POSYANDU DESA GONOHARJO").toUpperCase();
+
+            document.getElementById("prev-id-text").textContent = idVal;
+            document.getElementById("prev-kk-name").textContent = kkVal;
+            document.getElementById("prev-alamat").textContent = `${dusunVal}, ${rtrwVal}`;
+
+            const posyanduEl = document.getElementById("prev-posyandu-name");
+            if (!layoutConfig["el-f-logopos"]?.customHtml) {
+                if (posyanduVal === "POSYANDU DESA GONOHARJO") {
+                    posyanduEl.innerHTML = `POSYANDU<br><span class="c-posyandu-sub font-semibold">DESA GONOHARJO</span>`;
+                } else {
+                    const subName = posyanduVal.replace("POSYANDU ", "");
+                    posyanduEl.innerHTML = `POSYANDU<br><span class="c-posyandu-sub font-semibold">${subName}</span>`;
+                }
+            }
+
+            document.getElementById("prev-back-id").textContent = idVal;
+
+            const qrContainer = document.getElementById("qrcode-container");
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: idVal,
+                width: 140,
+                height: 140,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            const qrImg = qrContainer.querySelector("img");
+            const qrCanvas = qrContainer.querySelector("canvas");
+            if (qrImg) { qrImg.style.width = "100%"; qrImg.style.height = "100%"; }
+            if (qrCanvas) { qrCanvas.style.width = "100%"; qrCanvas.style.height = "100%"; }
+        }
+
+        function saveKartaData(e) {
+            e.preventDefault();
+            const idVal = document.getElementById("input-id").value.trim().toUpperCase();
+            const kkVal = document.getElementById("input-kk").value.trim().toUpperCase();
+            const dusunVal = document.getElementById("input-dusun").value.trim().toUpperCase();
+            const rtrwVal = document.getElementById("input-rtrw").value.trim().toUpperCase();
+            const posyanduVal = document.getElementById("input-posyandu").value;
+            const pinVal = document.getElementById("input-pin").value.trim();
+
+            const memberRows = document.querySelectorAll(".member-row");
+            const members = [];
+            memberRows.forEach(row => {
+                const mName = row.querySelector(".m-name").value.trim().toUpperCase();
+                const mRel = row.querySelector(".m-rel").value.trim();
+                const mCat = row.querySelector(".m-cat").value;
+                if (mName) {
+                    members.push({ name: mName, relation: mRel, category: mCat });
+                }
+            });
+
+            const newRecord = {
+                id: idVal,
+                kk: kkVal,
+                dusun: dusunVal,
+                rtrw: rtrwVal,
+                posyandu: posyanduVal,
+                pin: pinVal,
+                updatedAt: new Date().toISOString().split("T")[0],
+                members: members
+            };
+
+            if (editingId) {
+                const idx = kartaRecords.findIndex(r => r.id === editingId);
+                if (idx !== -1) kartaRecords[idx] = newRecord;
+                editingId = idVal;
+                document.getElementById("edit-mode-id").textContent = idVal;
+                showToast(`Data kartu ${idVal} berhasil diperbarui!`);
+            } else {
+                const existIdx = kartaRecords.findIndex(r => r.id === idVal);
+                if (existIdx !== -1) {
+                    kartaRecords[existIdx] = newRecord;
+                    showToast(`Data kartu ${idVal} diperbarui!`);
+                } else {
+                    kartaRecords.unshift(newRecord);
+                    showToast(`Kartu baru ${idVal} (${kkVal}) berhasil dibuat!`);
+                }
+            }
+
+            saveRecordsToStorage();
+            updateLivePreview();
+            renderDatabaseTable();
+        }
+
+        // ================= TAB 2: TABEL RINGKAS RIBUAN DATA & MODAL DETAIL =================
+        function renderDatabaseTable() {
+            const tbody = document.getElementById("database-tbody");
+            const footerInfo = document.getElementById("table-footer-info");
+            const qSearch = (document.getElementById("filter-search").value || "").toLowerCase();
+            const qPosyandu = document.getElementById("filter-posyandu").value;
+            const qAlamat = (document.getElementById("filter-alamat").value || "").toLowerCase();
+
+            const filtered = kartaRecords.filter(r => {
+                const matchSearch = r.id.toLowerCase().includes(qSearch) || r.kk.toLowerCase().includes(qSearch);
+                const matchPosyandu = !qPosyandu || r.posyandu === qPosyandu;
+                const fullAddr = `${r.dusun} ${r.rtrw}`.toLowerCase();
+                const matchAlamat = !qAlamat || fullAddr.includes(qAlamat);
+                return matchSearch && matchPosyandu && matchAlamat;
+            });
+
+            footerInfo.innerHTML = `<span>Menampilkan <strong>${filtered.length}</strong> dari <strong>${kartaRecords.length}</strong> total kartu KARTA terdaftar</span>`;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-8 text-center text-slate-500 font-semibold">
+                            Tidak ada data kartu KARTA yang cocok dengan pencarian Anda.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(r => `
+                <tr class="hover:bg-purple-50/80 transition">
+                    <td class="py-3 px-4 whitespace-nowrap">
+                        <span class="px-2.5 py-1 bg-slate-900 text-amber-300 font-extrabold text-xs rounded-lg tracking-wider">
+                            ${r.id}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 font-extrabold text-slate-900">
+                        ${r.kk}
+                    </td>
+                    <td class="py-3 px-4 text-slate-700">
+                        ${r.dusun}, ${r.rtrw}
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2.5 py-0.5 text-[11px] font-bold bg-purple-100 text-purple-800 rounded-md">
+                            ${r.posyandu}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                        <div class="inline-flex items-center gap-1.5">
+                            <button onclick="openDetailModal('${r.id}')" class="px-3 py-1.5 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs rounded-xl inline-flex items-center gap-1.5 shadow-xs transition">
+                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                Detail & Cetak
+                            </button>
+                            <button onclick="deleteRecord('${r.id}')" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Data">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+
+            lucide.createIcons();
+        }
+
+        function openDetailModal(id) {
+            const record = kartaRecords.find(r => r.id === id);
+            if (!record) return;
+            currentModalRecordId = id;
+
+            // Sinkronkan kartu utama ke data warga ini agar kloning pratinjau akurat
+            populateFormForPreviewOnly(record);
+
+            document.getElementById("modal-badge-id").textContent = record.id;
+            document.getElementById("modal-title-kk").textContent = record.kk;
+            document.getElementById("modal-sub-info").textContent = `${record.dusun}, ${record.rtrw} • ${record.posyandu}`;
+            document.getElementById("modal-info-id").textContent = record.id;
+            document.getElementById("modal-info-pin").textContent = record.pin || "123456";
+            document.getElementById("modal-info-date").textContent = record.updatedAt || "-";
+
+            // Tombol aksi di modal
+            document.getElementById("modal-btn-edit").onclick = () => loadRecordForEdit(record.id, false);
+            document.getElementById("modal-btn-layout").onclick = () => loadRecordForEdit(record.id, true);
+            document.getElementById("modal-btn-print").onclick = () => {
+                closeDetailModal();
+                switchTab("generate");
+                setTimeout(() => prepareAndPrint(), 300);
+            };
+
+            // Render Anggota Keluarga
+            const membersList = document.getElementById("modal-members-list");
+            membersList.innerHTML = record.members.map((m, idx) => `
+                <div class="flex items-center justify-between text-xs py-1.5 px-3 rounded-xl bg-white border border-slate-200">
+                    <div>
+                        <span class="font-bold text-slate-800">${idx + 1}. ${m.name}</span>
+                        <span class="text-slate-500 ml-1">(${m.relation})</span>
+                    </div>
+                    <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-purple-100 text-purple-800">
+                        ${m.category}
+                    </span>
+                </div>
+            `).join("");
+
+            // Kloning pratinjau kartu depan & belakang ke dalam modal
+            setTimeout(() => {
+                const frontClone = document.getElementById("card-front").cloneNode(true);
+                const backClone = document.getElementById("card-back").cloneNode(true);
+                frontClone.id = "modal-card-front";
+                backClone.id = "modal-card-back";
+
+                // Salin gambar QR Code dari canvas asli ke clone
+                const origCanvas = document.querySelector("#qrcode-container canvas");
+                const cloneQrBox = frontClone.querySelector("#qrcode-container");
+                if (origCanvas && cloneQrBox) {
+                    const imgQr = document.createElement("img");
+                    imgQr.src = origCanvas.toDataURL("image/png");
+                    imgQr.style.width = "100%";
+                    imgQr.style.height = "100%";
+                    cloneQrBox.innerHTML = "";
+                    cloneQrBox.appendChild(imgQr);
+                }
+
+                const cloneWrapper = document.getElementById("modal-card-preview-clone");
+                cloneWrapper.innerHTML = "";
+                cloneWrapper.appendChild(frontClone);
+                cloneWrapper.appendChild(backClone);
+            }, 80);
+
+            document.getElementById("detail-modal").classList.remove("hidden");
+            lucide.createIcons();
+        }
+
+        function closeDetailModal() {
+            document.getElementById("detail-modal").classList.add("hidden");
+        }
+
+        // ================= EKSPOR PNG & PDF DARI MODAL DETAIL =================
+        async function exportCardAsPNG() {
+            const frontEl = document.getElementById("modal-card-front");
+            const backEl = document.getElementById("modal-card-back");
+            if (!frontEl || !backEl) return;
+
+            showToast("Menyiapkan gambar PNG resolusi tinggi...");
+            const canvasFront = await html2canvas(frontEl, { scale: 3, useCORS: true });
+            const canvasBack = await html2canvas(backEl, { scale: 3, useCORS: true });
+
+            // Gabungkan Depan & Belakang dalam 1 PNG atau unduh keduanya
+            const linkF = document.createElement("a");
+            linkF.download = `KARTA_${currentModalRecordId}_DEPAN.png`;
+            linkF.href = canvasFront.toDataURL("image/png");
+            linkF.click();
+
+            setTimeout(() => {
+                const linkB = document.createElement("a");
+                linkB.download = `KARTA_${currentModalRecordId}_BELAKANG.png`;
+                linkB.href = canvasBack.toDataURL("image/png");
+                linkB.click();
+                showToast("File PNG Depan & Belakang berhasil diunduh!");
+            }, 400);
+        }
+
+        async function exportCardAsPDF() {
+            const frontEl = document.getElementById("modal-card-front");
+            const backEl = document.getElementById("modal-card-back");
+            if (!frontEl || !backEl) return;
+
+            showToast("Membuat file PDF ukuran standar ID Card (CR80)...");
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: "landscape",
+                unit: "mm",
+                format: [85.6, 53.98]
+            });
+
+            const canvasFront = await html2canvas(frontEl, { scale: 3, useCORS: true });
+            const canvasBack = await html2canvas(backEl, { scale: 3, useCORS: true });
+
+            pdf.addImage(canvasFront.toDataURL("image/png"), "PNG", 0, 0, 85.6, 53.98);
+            pdf.addPage([85.6, 53.98], "landscape");
+            pdf.addImage(canvasBack.toDataURL("image/png"), "PNG", 0, 0, 85.6, 53.98);
+
+            pdf.save(`KARTA_${currentModalRecordId}.pdf`);
+            showToast(`File KARTA_${currentModalRecordId}.pdf berhasil diunduh!`);
+        }
+
+        function deleteRecord(id) {
+            if (confirm(`Apakah Anda yakin ingin menghapus data KARTA ${id}?`)) {
+                kartaRecords = kartaRecords.filter(r => r.id !== id);
+                saveRecordsToStorage();
+                renderDatabaseTable();
+                showToast(`Data kartu ${id} telah dihapus.`);
+            }
+        }
+
+        // ================= CUSTOM ASSETS UPLOAD =================
+        function handleAssetUpload(event, key) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                localStorage.setItem("karta_asset_" + key, dataUrl);
+                applyCustomAsset(key, dataUrl);
+                showToast("Gambar berhasil diterapkan pada kartu!");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function loadCustomAssets() {
+            ["bgFront", "bgBack", "logoDesa", "logoPosyandu"].forEach(key => {
+                const saved = localStorage.getItem("karta_asset_" + key);
+                if (saved) applyCustomAsset(key, saved);
+            });
+        }
+
+        function applyCustomAsset(key, dataUrl) {
+            if (key === "bgFront") {
+                const img = document.getElementById("img-bg-front");
+                img.src = dataUrl;
+                img.classList.remove("hidden");
+                document.getElementById("svg-bg-front").classList.add("hidden");
+            } else if (key === "bgBack") {
+                const img = document.getElementById("img-bg-back");
+                img.src = dataUrl;
+                img.classList.remove("hidden");
+                document.getElementById("svg-bg-back").classList.add("hidden");
+            } else if (key === "logoDesa") {
+                const img = document.getElementById("img-logo-desa");
+                img.src = dataUrl;
+                img.classList.remove("hidden");
+                document.getElementById("svg-logo-desa").classList.add("hidden");
+            } else if (key === "logoPosyandu") {
+                const img = document.getElementById("img-logo-posyandu");
+                img.src = dataUrl;
+                img.classList.remove("hidden");
+                document.getElementById("svg-logo-posyandu").classList.add("hidden");
+            }
+        }
+
+        function resetCustomAssets() {
+            ["bgFront", "bgBack", "logoDesa", "logoPosyandu"].forEach(key => {
+                localStorage.removeItem("karta_asset_" + key);
+            });
+            location.reload();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toast-msg").textContent = msg;
+            toast.classList.remove("translate-y-20", "opacity-0");
+            setTimeout(() => {
+                toast.classList.add("translate-y-20", "opacity-0");
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
