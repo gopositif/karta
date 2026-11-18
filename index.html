@@ -201,6 +201,13 @@
         #hdr-portals { scrollbar-width: thin; }
         @media (max-width: 639px) { #toast { left: 1rem; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); } }
         /* ===== v3 ===== */
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        body { overflow-x: clip; -webkit-tap-highlight-color: transparent; }
+        :focus-visible { outline: 2px solid #3d5d8c; outline-offset: 2px; }
+        .login-art-wrap { display: grid; }
+        .la-img { grid-area: 1 / 1; width: 100%; height: auto; align-self: center; opacity: 0; transform: scale(1.05); transition: opacity 1.6s ease-in-out, transform 7s ease-out; pointer-events: none; }
+        .la-img.is-on { opacity: 1; transform: scale(1); }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } .la-img, .la-img.is-on { transform: none; } }
         #assets-panel > summary::-webkit-details-marker { display: none; }
         .dt-btn { display:flex; align-items:center; justify-content:center; gap:.45rem; min-height:2.5rem; padding:.4rem .6rem; border-radius:.75rem; border:1px solid #cbdff3; background:#fff; color:#344d73; font-weight:700; font-size:.75rem; line-height:1.15; text-align:center; transition:all .15s; }
         .dt-btn:hover { background:#f3f8fd; border-color:#628cc6; }
@@ -211,6 +218,7 @@
         .dt-danger { color:#be123c; border-color:#fecdd3; } .dt-danger:hover { background:#fff1f2; border-color:#fb7185; }
         .out-btn { display:inline-flex; align-items:center; justify-content:center; gap:.375rem; padding:.5rem .85rem; border-radius:.75rem; font-size:.75rem; font-weight:800; color:#fff; box-shadow:0 1px 2px rgba(0,0,0,.12); transition:filter .15s, transform .15s; white-space:nowrap; }
         .out-btn:hover { filter:brightness(1.08); transform:translateY(-1px); }
+        .chip-btn { width:1.75rem; min-height:1.75rem !important; display:inline-flex; align-items:center; justify-content:center; border-radius:9999px; color:#3d5d8c; } .chip-btn:hover { background:#e4eef9; } .chip-btn.danger { color:#be123c; } .chip-btn.danger:hover { background:#ffe4e6; } .chip-btn svg { width:.8rem; height:.8rem; }
         .ibtn { width:2.25rem; height:2.25rem; display:inline-flex; align-items:center; justify-content:center; border-radius:.65rem; color:#3d5d8c; transition:background .15s; }
         .ibtn:hover { background:#e4eef9; } .ibtn.danger { color:#be123c; } .ibtn.danger:hover { background:#ffe4e6; }
         @media print {
@@ -247,7 +255,11 @@
                             <p class="text-xs font-semibold text-denim-100 mt-1">Posyandu Desa Gonoharjo</p>
                         </div>
                     </div>
-                    <img id="login-art" src="https://lh3.googleusercontent.com/d/1T6byGq2_yFtSkH7vc7_qLGRfh4tv-T9q" alt="Contoh kartu KARTA" class="w-full max-w-[22rem] mx-auto lg:max-w-none rounded-xl shadow-xl -rotate-3 mt-2" onerror="this.style.display='none'">
+                    <div id="login-art-wrap" class="login-art-wrap w-full max-w-[22rem] mx-auto lg:max-w-none -rotate-3 mt-2">
+                        <img id="login-art" src="https://lh3.googleusercontent.com/d/1T6byGq2_yFtSkH7vc7_qLGRfh4tv-T9q" alt="Contoh kartu KARTA" class="la-img is-on rounded-xl shadow-xl" decoding="async" onerror="this.dataset.err=1;this.style.display='none'">
+                        <img src="https://lh3.googleusercontent.com/d/18BbDRwodDQQoavTniswyrA2Xv9mSUbwJ" alt="Contoh kartu KARTA" class="la-img rounded-xl shadow-xl" decoding="async" onerror="this.dataset.err=1;this.style.display='none'">
+                        <img src="https://lh3.googleusercontent.com/d/1Xp6yh5McxnKVglDIEwUBW-sLIe3zfk9M" alt="Contoh kartu KARTA" class="la-img rounded-xl shadow-xl" decoding="async" onerror="this.dataset.err=1;this.style.display='none'">
+                    </div>
                     <p class="text-sm leading-relaxed text-denim-50 lg:mt-auto">Sistem Cetak <strong>KARTA</strong> (Kartu Akses &amp; Rekam Terpadu Warga). Halaman ini hanya dapat dibuka oleh Admin dan Kader.</p>
                 </div>
                 <div class="lg:col-span-3 p-6 sm:p-10 flex flex-col justify-center bg-white/60">
@@ -390,7 +402,8 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">RT / RW *</label>
-                            <input type="text" id="input-rtrw" maxlength="30" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="RT 02 / RW 01">
+                            <input type="text" id="input-rtrw" maxlength="30" required oninput="updateLivePreview()" onblur="this.value=fmtRW(this.value);updateLivePreview()" class="w-full px-3.5 py-2 text-sm uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="Contoh: 1 / 2" autocomplete="off">
+                            <p class="text-[11px] text-slate-500 mt-1">Cukup angka &rarr; RT 001 / RW 002</p>
                         </div>
                     </div>
 
@@ -417,6 +430,7 @@
                                 <p class="text-[11px] text-slate-500">5 Kategori Utama + Sinkron Otomatis Kategori Web Kader</p>
                             </div>
                             <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="toggleRelManager()" class="ibtn border border-denim-200 bg-white" title="Kelola pilihan status keluarga" aria-label="Kelola status keluarga"><i data-lucide="settings-2" class="w-4 h-4"></i></button>
                                 <button type="button" onclick="promptAddCustomCategory()" class="px-2.5 py-1.5 bg-denim-100 hover:bg-denim-200 text-denim-800 rounded-xl text-xs font-bold flex items-center gap-1 transition" title="Tambah Kategori Baru">
                                     <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
                                     + Kategori
@@ -428,6 +442,13 @@
                             </div>
                         </div>
 
+                        <div id="rel-manager" class="hidden mb-3 p-3 rounded-2xl border border-denim-200 bg-denim-50/70">
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <p class="text-xs font-bold text-slate-700">Pilihan status keluarga</p>
+                                <button type="button" onclick="relAdd()" class="dt-btn !min-h-0 py-1.5 px-2.5"><i data-lucide="plus"></i><span>Tambah</span></button>
+                            </div>
+                            <div id="rel-chips" class="flex flex-wrap gap-1.5"></div>
+                        </div>
                         <div id="members-container" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
                             <!-- Dynamic Member Rows -->
                         </div>
@@ -747,7 +768,7 @@
                                 <div id="el-f-databox" data-label="Kotak Nama & Alamat (isi dari Form)" data-text-editable="true" class="draggable-el bg-[#082f42]/75 border border-teal-400/25 rounded-[2.2cqw] p-[2.5cqw] shadow-inner" style="top: 43.5%; left: 34.5%; width: 59%;">
                                     <div class="mb-[1.3cqw]">
                                         <div class="c-label font-medium editable-target" data-f="Label nama">nama:</div>
-                                        <div id="prev-kk-name" class="c-value-name font-extrabold uppercase tracking-wide truncate">BUDI SANTOSO</div>
+                                        <div id="prev-kk-name" class="c-value-name font-extrabold uppercase tracking-wide whitespace-nowrap">BUDI SANTOSO</div>
                                     </div>
                                     <div>
                                         <div class="c-label font-medium editable-target" data-f="Label alamat">alamat:</div>
@@ -786,10 +807,10 @@
                                 <div id="el-b-panduan" data-label="Teks Panduan Penggunaan" data-text-editable="true" class="draggable-el" style="top: 9.5%; left: 6%; width: 88%;">
                                     <div>
                                         <h3 class="cb-heading font-extrabold tracking-wide mb-[1cqw] editable-target" data-f="Judul panduan">PANDUAN PENGGUNAAN KARTA:</h3>
-                                        <ol class="cb-list list-decimal pl-[3.6cqw] space-y-[0.55cqw] font-medium">
-                                            <li class="editable-target" data-f="Butir 1">Kartu ini identitas resmi warga untuk pelayanan terpadu desa dan posyandu.</li>
-                                            <li class="editable-target" data-f="Butir 2">Tunjukkan kartu ini kepada petugas desa/kader posyandu untuk discan rekam data anda.</li>
-                                            <li class="editable-target" data-f="Butir 3">Akses Layanan Mandiri Online dapat dengan mengakses <strong>WEB POSYANDU</strong> dan <strong>WEB PELAYANAN DESA</strong>.</li>
+                                        <ol class="cb-list list-none space-y-[0.55cqw] font-medium">
+                                            <li class="flex items-start"><span class="cb-num shrink-0 w-[3.6cqw] pr-[0.8cqw] text-right">1.</span><span class="editable-target min-w-0 flex-1" data-f="Butir 1">Kartu ini identitas resmi warga untuk pelayanan terpadu desa dan posyandu.</span></li>
+                                            <li class="flex items-start"><span class="cb-num shrink-0 w-[3.6cqw] pr-[0.8cqw] text-right">2.</span><span class="editable-target min-w-0 flex-1" data-f="Butir 2">Tunjukkan kartu ini kepada petugas desa/kader posyandu untuk discan rekam data anda.</span></li>
+                                            <li class="flex items-start"><span class="cb-num shrink-0 w-[3.6cqw] pr-[0.8cqw] text-right">3.</span><span class="editable-target min-w-0 flex-1" data-f="Butir 3">Akses Layanan Mandiri Online dapat dengan mengakses <strong>WEB POSYANDU</strong> dan <strong>WEB PELAYANAN DESA</strong>.</span></li>
                                         </ol>
                                     </div>
                                 </div>
@@ -967,14 +988,14 @@
         <div class="bg-white rounded-3xl max-w-4xl w-full shadow-2xl border border-denim-200 overflow-hidden my-auto">
             <!-- Modal Header -->
             <div class="bg-gradient-to-r from-denim-900 to-mist-800 text-white px-5 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
+                <div class="flex items-center gap-2.5 min-w-0">
                     <span id="modal-badge-id" class="px-2.5 py-1 bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg">GP-0001</span>
-                    <div>
-                        <h3 id="modal-title-kk" class="text-base font-extrabold">BUDI SANTOSO</h3>
-                        <p id="modal-sub-info" class="text-xs text-denim-100">DUSUN KRAJAN, RT 02 / RW 01 • POSYANDU DESA GONOHARJO</p>
+                    <div class="min-w-0">
+                        <h3 id="modal-title-kk" class="text-base font-extrabold truncate">BUDI SANTOSO</h3>
+                        <p id="modal-sub-info" class="text-xs text-denim-100 truncate">DUSUN KRAJAN, RT 02 / RW 01 • POSYANDU DESA GONOHARJO</p>
                     </div>
                 </div>
-                <button onclick="closeDetailModal()" class="p-2 bg-white/15 hover:bg-white/25 rounded-xl text-white transition">
+                <button onclick="closeDetailModal()" aria-label="Tutup" class="shrink-0 ml-2 p-2 bg-white/15 hover:bg-white/25 rounded-xl text-white transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -983,24 +1004,24 @@
             <div class="p-5 sm:p-6 space-y-5 max-h-[78dvh] overflow-y-auto">
                 
                 <!-- Action Toolbar di dalam Modal -->
-                <div class="flex flex-wrap items-center gap-2 bg-denim-50 p-3 rounded-2xl border border-denim-200">
-                    <button id="modal-btn-edit" class="px-3.5 py-2 bg-denim-700 hover:bg-denim-800 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 bg-denim-50 p-3 rounded-2xl border border-denim-200">
+                    <button id="modal-btn-edit" class="px-3.5 py-2 bg-denim-700 hover:bg-denim-800 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs text-center leading-tight min-h-[2.5rem]">
                         <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                         Edit Data & Anggota
                     </button>
-                    <button id="modal-btn-layout" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold rounded-xl flex items-center gap-1.5 shadow-xs">
+                    <button id="modal-btn-layout" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold rounded-xl flex items-center justify-center gap-1.5 shadow-xs text-center leading-tight min-h-[2.5rem]">
                         <i data-lucide="move" class="w-3.5 h-3.5"></i>
                         Atur Tata Letak & Teks Kartu
                     </button>
-                    <button id="modal-btn-print" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs">
+                    <button id="modal-btn-print" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs text-center leading-tight min-h-[2.5rem]">
                         <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                         Cetak (Print)
                     </button>
-                    <button onclick="exportCardAsPNG()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs">
+                    <button onclick="exportCardAsPNG()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs text-center leading-tight min-h-[2.5rem]">
                         <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
                         Ekspor PNG
                     </button>
-                    <button onclick="exportCardAsPDF()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs">
+                    <button onclick="exportCardAsPDF()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs text-center leading-tight min-h-[2.5rem]">
                         <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
                         Ekspor PDF
                     </button>
@@ -1480,7 +1501,7 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             document.getElementById("input-id").placeholder = nextId() + " (otomatis)";
             const kkVal = (document.getElementById("input-kk").value || "NAMA KEPALA KELUARGA").toUpperCase();
             const dusunVal = (document.getElementById("input-dusun").value || "DUSUN / JALAN").toUpperCase();
-            const rtrwVal = (document.getElementById("input-rtrw").value || "RT 00 / RW 00").toUpperCase();
+            const rtrwVal = (fmtRW(document.getElementById("input-rtrw").value) || "RT 000 / RW 000").toUpperCase();
             const posyanduVal = (document.getElementById("input-posyandu").value || "POSYANDU DESA GONOHARJO").toUpperCase();
 
             document.getElementById("prev-id-text").textContent = idVal;
@@ -1498,6 +1519,7 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             }
 
             document.getElementById("prev-back-id").textContent = idVal;
+            fitName();
 
             const qrContainer = document.getElementById("qrcode-container");
             qrContainer.innerHTML = "";
@@ -1603,6 +1625,11 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             return html2canvas(el, { scale: sc, useCORS: true, backgroundColor: null, logging: false, onclone: (d, c) => {
                 c = c || d.getElementById(el.id); if (!c) return;
                 c.style.borderRadius = "0"; c.style.boxShadow = "none"; c.style.border = "0"; c.classList.remove("bg-sel");
+                /* html2canvas menggambar teks sedikit lebih rendah: jangan ada kotak yang memotong tulisan */
+                const W = d.defaultView; c.querySelectorAll("*").forEach(e => {
+                    if (e instanceof W.SVGElement) return;
+                    const o = W.getComputedStyle(e); if (o.overflow !== "visible" || o.textOverflow === "ellipsis") { e.style.overflow = "visible"; e.style.textOverflow = "clip"; }
+                });
             } });
         }
         function dlCanvas(cv, name) { const a = document.createElement("a"); a.download = name; a.href = cv.toDataURL("image/png"); a.click(); }
@@ -2188,6 +2215,24 @@ async function initDesigns() {
     else { loadImgCfg(); try { textsCfg = JSON.parse(localStorage.getItem("karta_texts_v2") || "{}"); } catch (e) { textsCfg = {}; } applyLayout(); renderDesignList(); }
 }
 
+
+/* ---------- Slideshow gambar kartu di halaman login (berhenti otomatis setelah masuk) ---------- */
+(function () {
+    const wrap = document.getElementById("login-art-wrap"), scr = document.getElementById("login-screen"); if (!wrap || !scr) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)"); let t = null;
+    const ok = () => [...wrap.querySelectorAll(".la-img")].filter(e => !e.dataset.err && e.complete && e.naturalWidth > 0);
+    const next = () => { const l = ok(); if (l.length < 2) return; const cur = l.findIndex(e => e.classList.contains("is-on")); wrap.querySelectorAll(".la-img").forEach(e => e.classList.toggle("is-on", e === l[(cur + 1) % l.length])); };
+    const stop = () => { clearInterval(t); t = null; };
+    const start = () => { stop(); if (reduce.matches || document.hidden || scr.classList.contains("hidden") || ok().length < 2) return; t = setInterval(next, 5500); };
+    new MutationObserver(start).observe(scr, { attributes: true, attributeFilter: ["class"] });
+    document.addEventListener("visibilitychange", start);
+    wrap.querySelectorAll(".la-img").forEach(e => {
+        e.addEventListener("load", () => { if (!wrap.querySelector(".la-img.is-on:not([data-err])")) { const l = ok(); if (l[0]) l[0].classList.add("is-on"); } start(); });
+        e.addEventListener("error", () => { e.dataset.err = 1; e.style.display = "none"; e.classList.remove("is-on"); const l = ok(); if (l[0] && !wrap.querySelector(".la-img.is-on")) l[0].classList.add("is-on"); start(); });
+    });
+    start();
+})();
+
 /* ---------- Portal (login & header) ---------- */
 const PORTALS = [["Portal Utama", "https://gopositif.github.io/", "globe"], ["Portal Sasaran", "https://gopositif.github.io/sasaran/", "qr-code"], ["Portal Kader", "https://gopositif.github.io/kader/", "user-pen"], ["Portal Admin", "https://gopositif.github.io/admin/", "shield-check"]];
 function renderPortals() {
@@ -2206,7 +2251,7 @@ const posList = () => [...$("input-posyandu").options].map(o => o.value);
 function normRecord(r) {
     if (!r || typeof r !== "object") return null;
     const id = cleanId(r.id); if (!id) return null;
-    return { id, kk: cleanTxt(r.kk, 60).toUpperCase(), dusun: cleanTxt(r.dusun, 60).toUpperCase(), rtrw: cleanTxt(r.rtrw, 30).toUpperCase(),
+    return { id, kk: cleanTxt(r.kk, 60).toUpperCase(), dusun: cleanTxt(r.dusun, 60).toUpperCase(), rtrw: fmtRW(r.rtrw),
         posyandu: posList().includes(r.posyandu) ? r.posyandu : posList()[0], pin: cleanPin(r.pin) || "123456", updatedAt: cleanTxt(r.updatedAt, 10),
         members: (Array.isArray(r.members) ? r.members : []).slice(0, 40).map(m => ({ name: cleanTxt(m && m.name, 60).toUpperCase(), relation: cleanTxt(m && m.relation, 30), category: cleanTxt(m && m.category, 40) })).filter(m => m.name) };
 }
@@ -2216,18 +2261,93 @@ function loadRecords() {
     if (!Array.isArray(a)) saveRecordsToStorage();
     updateBadgeCount();
 }
-function addMemberRow(name = "", relation = "Anggota", category = "Balita") {
+function addMemberRow(name = "", relation, category = "Balita") {
+    if (!relation) relation = [...document.querySelectorAll(".member-row .m-rel")].some(x => x.value === "Kepala Keluarga") ? REL_ANAK : "Kepala Keluarga";
     const row = document.createElement("div");
     row.className = "member-row bg-denim-50/70 border border-denim-200/80 rounded-xl p-2.5 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center";
     row.innerHTML = `<div class="sm:col-span-5"><input type="text" maxlength="60" class="m-name w-full px-2.5 py-1.5 text-xs font-semibold uppercase rounded-lg border border-denim-200 bg-white" placeholder="Nama Lengkap Anggota" required></div>
-        <div class="sm:col-span-3"><input type="text" maxlength="30" class="m-rel w-full px-2 py-1.5 text-xs rounded-lg border border-denim-200 bg-white" placeholder="Status Keluarga"></div>
-        <div class="sm:col-span-3"><select class="m-cat w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-denim-200 bg-white"></select></div>
+        <div class="sm:col-span-3"><select class="m-rel w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-denim-200 bg-white" aria-label="Status keluarga"></select></div>
+        <div class="sm:col-span-3"><select class="m-cat w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-denim-200 bg-white" aria-label="Kategori sasaran"></select></div>
         <div class="sm:col-span-1 flex justify-end"><button type="button" class="m-del p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Anggota" aria-label="Hapus anggota"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
-    row.querySelector(".m-name").value = name; row.querySelector(".m-rel").value = relation;
+    row.querySelector(".m-name").value = name;
+    const rs = row.querySelector(".m-rel"); fillRelSelect(rs, relation); rs.onchange = renumberAnak;
     const sel = row.querySelector(".m-cat");
     (availableCategories.includes(category) ? availableCategories : [...availableCategories, category]).forEach(c => sel.add(new Option(c, c)));
-    sel.value = category; row.querySelector(".m-del").onclick = () => row.remove();
-    $("members-container").appendChild(row); lucide.createIcons();
+    sel.value = category; row.querySelector(".m-del").onclick = () => { row.remove(); renumberAnak(); };
+    $("members-container").appendChild(row); renumberAnak(); lucide.createIcons();
+}
+/* ---------- Pilihan status keluarga (dapat ditambah, diubah, dihapus). "Anak" otomatis diberi nomor ke-1, 2, 3 ---------- */
+const REL_KEY = "karta_relations_v1", REL_ANAK = "Anak", REL_DEF = ["Kepala Keluarga", "Istri", "Anak", "Kakek", "Nenek", "Saudara", "Paman", "Bibi"];
+let RELS = REL_DEF.slice();
+const relBase = v => /^anak(\s*ke-?\s*\d+)?$/i.test(String(v).trim()) ? REL_ANAK : cleanTxt(v, 30);
+function loadRels() {
+    try { const a = JSON.parse(localStorage.getItem(REL_KEY) || "null");
+        if (Array.isArray(a)) { const l = [...new Set(a.map(x => cleanTxt(x, 30)).filter(Boolean))].slice(0, 30); if (!l.includes(REL_ANAK)) l.splice(Math.min(2, l.length), 0, REL_ANAK); RELS = l; } } catch (e) {}
+}
+function fillRelSelect(sel, val) {
+    const v = relBase(val || sel.value || RELS[0]), list = RELS.includes(v) ? RELS : [...RELS, v];   // nilai lama di luar daftar tetap dipertahankan
+    sel.textContent = ""; list.forEach(r => sel.add(new Option(r, r))); sel.value = v;
+}
+function renumberAnak() {
+    let n = 0;
+    document.querySelectorAll(".member-row .m-rel").forEach(sel => {
+        const o = [...sel.options].find(x => x.value === REL_ANAK); if (!o) return;
+        if (sel.value === REL_ANAK) { n++; o.textContent = "Anak ke-" + n; } else o.textContent = REL_ANAK;
+    });
+}
+const memberRel = row => { const s = row.querySelector(".m-rel"); return s.selectedOptions[0] ? s.selectedOptions[0].textContent : s.value; };
+function refreshRels() {
+    lsSet(REL_KEY, JSON.stringify(RELS));
+    document.querySelectorAll(".member-row .m-rel").forEach(sel => fillRelSelect(sel, sel.value));
+    renumberAnak(); renderRelManager();
+}
+function toggleRelManager() { const p = $("rel-manager"); p.classList.toggle("hidden"); if (!p.classList.contains("hidden")) renderRelManager(); }
+function renderRelManager() {
+    const box = $("rel-chips"); if (!box) return; box.textContent = "";
+    RELS.forEach(r => {
+        const c = document.createElement("span"); c.className = "inline-flex items-center gap-0.5 pl-3 pr-1 py-0.5 rounded-full bg-white border border-denim-200 text-xs font-bold text-denim-800";
+        const t = document.createElement("span"); t.textContent = r === REL_ANAK ? "Anak (otomatis ke-1, 2, 3...)" : r; c.appendChild(t);
+        if (r !== REL_ANAK) [["pencil", "Ubah nama", () => relEdit(r), ""], ["x", "Hapus", () => relDel(r), " danger"]].forEach(([ic, ti, fn, cl]) => {
+            const b = document.createElement("button"); b.type = "button"; b.className = "chip-btn" + cl; b.title = ti; b.setAttribute("aria-label", ti + " " + r); b.onclick = fn;
+            b.innerHTML = `<i data-lucide="${ic}"></i>`; c.appendChild(b);
+        });
+        box.appendChild(c);
+    });
+    lucide.createIcons();
+}
+function relAdd() {
+    const n = cleanTxt(prompt("Nama status keluarga baru:"), 30); if (!n) return;
+    if (relBase(n) === REL_ANAK) return showToast("Status Anak sudah ada dan otomatis diberi nomor ke-1, 2, 3.");
+    if (RELS.some(r => r.toLowerCase() === n.toLowerCase())) return showToast("Status tersebut sudah ada.");
+    RELS.push(n); refreshRels(); showToast(`Status "${n}" ditambahkan.`);
+}
+function relEdit(old) {
+    const n = cleanTxt(prompt("Ubah nama status:", old), 30); if (!n || n === old) return;
+    if (relBase(n) === REL_ANAK || RELS.some(r => r !== old && r.toLowerCase() === n.toLowerCase())) return showToast("Nama status sudah ada.");
+    RELS[RELS.indexOf(old)] = n;
+    document.querySelectorAll(".member-row .m-rel").forEach(sel => { if (sel.value === old) sel.dataset.ren = "1"; });
+    let c = 0; kartaRecords.forEach(r => r.members.forEach(m => { if (m.relation === old) { m.relation = n; c++; } })); if (c) saveRecordsToStorage();
+    document.querySelectorAll(".member-row .m-rel[data-ren]").forEach(sel => { delete sel.dataset.ren; fillRelSelect(sel, n); });
+    refreshRels(); showToast(`Diubah menjadi "${n}"` + (c ? ` (${c} data ikut diperbarui)` : "") + ".");
+}
+function relDel(r) {
+    if (RELS.length <= 2) return showToast("Minimal harus ada dua pilihan status.");
+    if (!confirm(`Hapus status "${r}" dari pilihan?`)) return;
+    RELS = RELS.filter(x => x !== r); refreshRels(); showToast("Status dihapus dari pilihan.");
+}
+/* Nama panjang: kecilkan huruf otomatis agar muat satu baris (tanpa dipotong) */
+function fitName() {
+    const el = document.getElementById("prev-kk-name"); if (!el) return;
+    el.style.fontSize = ""; const w = el.clientWidth, sw = el.scrollWidth;
+    if (w > 0 && sw > w) el.style.fontSize = `calc(3.05cqw * ${(w / sw * 0.97).toFixed(3)})`;
+}
+/* RT/RW: "1 / 2", "rt1/rw2", "RT 01 RW 02" -> "RT 001 / RW 002" */
+function fmtRW(v) {
+    v = cleanTxt(v, 30).toUpperCase(); const n = v.match(/\d+/g) || []; if (!n.length) return v;
+    const rt = /RT\D*(\d+)/.exec(v), rw = /RW\D*(\d+)/.exec(v); let a, b;
+    if (rt && rw) { a = rt[1]; b = rw[1]; } else if (rt) { a = rt[1]; b = n[1]; } else if (rw) { b = rw[1]; a = n.length > 1 ? n[0] : null; } else { a = n[0]; b = n[1]; }
+    const p = x => String(parseInt(x, 10)).padStart(3, "0");
+    return [a != null ? "RT " + p(a) : "", b != null ? "RW " + p(b) : ""].filter(Boolean).join(" / ");
 }
 function refreshAllCategoryDropdowns() {
     document.querySelectorAll(".m-cat").forEach(sel => { const v = sel.value; sel.textContent = ""; availableCategories.forEach(c => sel.add(new Option(c, c))); sel.value = v; });
@@ -2244,14 +2364,14 @@ function saveKartaData(e) {
     e.preventDefault();
     const id = cleanId($("input-id").value) || nextId(); $("input-id").value = id;
     if (!/^[A-Z0-9]{2,6}-[A-Z0-9]{2,12}$/.test(id)) return showToast("ID kartu harus berformat GP-0001 (huruf/angka dan tanda hubung).");
-    const members = [...document.querySelectorAll(".member-row")].map(r => ({ name: r.querySelector(".m-name").value, relation: r.querySelector(".m-rel").value, category: r.querySelector(".m-cat").value }));
+    const members = [...document.querySelectorAll(".member-row")].map(r => ({ name: r.querySelector(".m-name").value, relation: memberRel(r), category: r.querySelector(".m-cat").value }));
     const rec = normRecord({ id, kk: $("input-kk").value, dusun: $("input-dusun").value, rtrw: $("input-rtrw").value, posyandu: $("input-posyandu").value, pin: $("input-pin").value, updatedAt: new Date().toISOString().split("T")[0], members });
     if (!rec.kk || !rec.dusun || !rec.rtrw) return showToast("Nama, dusun, dan RT/RW wajib diisi.");
     const idx = kartaRecords.findIndex(r => r.id === (editingId || id));
     if (editingId) { if (idx !== -1) kartaRecords[idx] = rec; editingId = id; $("edit-mode-id").textContent = id; showToast(`Data kartu ${id} berhasil diperbarui!`); }
     else if (idx !== -1) { kartaRecords[idx] = rec; showToast(`Data kartu ${id} diperbarui!`); }
     else { kartaRecords.unshift(rec); showToast(`Kartu baru ${id} (${rec.kk}) berhasil dibuat!`); }
-    saveRecordsToStorage(); updateLivePreview(); renderDatabaseTable();
+    $("input-rtrw").value = rec.rtrw; saveRecordsToStorage(); updateLivePreview(); renderDatabaseTable();
 }
 function renderDatabaseTable() {
     const tb = $("database-tbody"), q = ($("filter-search").value || "").toLowerCase(), qp = $("filter-posyandu").value, qa = ($("filter-alamat").value || "").toLowerCase();
@@ -2300,13 +2420,13 @@ function handleLogin(e) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    lucide.createIcons(); renderPortals(); initAuth(); syncCategoriesFromKaderAndStorage(); loadPos(); renderPos(null, true); loadRecords();
+    lucide.createIcons(); renderPortals(); initAuth(); syncCategoriesFromKaderAndStorage(); loadPos(); renderPos(null, true); loadRels(); loadRecords();
     initLayoutDefaults(); captureOrig(); loadCardCfg(); applyCardSize(true); initDragAndSelect(); initImgUI();
     $("database-tbody").addEventListener("click", ev => {
         const b = ev.target.closest("[data-act]"); if (!b) return;
         if (b.dataset.act === "detail") openDetailModal(b.dataset.id); else deleteRecord(b.dataset.id);
     });
-    resetFormToNew();
+    resetFormToNew(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitName);
     renderDatabaseTable();
     await initDesigns();
 });
