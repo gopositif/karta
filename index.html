@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#e4eef9">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.googleusercontent.com; connect-src 'self' https://raw.githubusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self'">
     <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1r5Z3o71WH4mpF5qn1Dfeav_V7qNnYldv">
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1r5Z3o71WH4mpF5qn1Dfeav_V7qNnYldv">
     <title>Cetak KARTA - GO-Positif Gonoharjo</title>
@@ -189,6 +190,41 @@
                 page-break-inside: avoid;
             }
         }
+        /* ===== v2: responsif & polesan ===== */
+        html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        button, select { touch-action: manipulation; }
+        @media (pointer: coarse) { button, select, input:not([type=range]):not([type=color]) { min-height: 40px; } }
+        .portal-link { background: rgba(255,255,255,.85); border: 1px solid #cbdff3; color: #344d73; transition: all .2s ease; }
+        .portal-link:hover { background: #fff; border-color: #628cc6; color: #2b3f5c; transform: translateY(-1px); }
+        body.text-edit-mode-active .editable-target { outline: 1px dashed #0ea5e9; outline-offset: 1px; border-radius: 2px; }
+        #login-screen { height: 100dvh; }
+        #hdr-portals { scrollbar-width: thin; }
+        @media (max-width: 639px) { #toast { left: 1rem; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); } }
+        /* ===== v3 ===== */
+        #assets-panel > summary::-webkit-details-marker { display: none; }
+        .dt-btn { display:flex; align-items:center; justify-content:center; gap:.45rem; min-height:2.5rem; padding:.4rem .6rem; border-radius:.75rem; border:1px solid #cbdff3; background:#fff; color:#344d73; font-weight:700; font-size:.75rem; line-height:1.15; text-align:center; transition:all .15s; }
+        .dt-btn:hover { background:#f3f8fd; border-color:#628cc6; }
+        .dt-btn svg { width:.95rem; height:.95rem; flex-shrink:0; }
+        .dt-primary { background:#3d5d8c; border-color:#3d5d8c; color:#fff; }
+        .dt-primary:hover { background:#344d73; border-color:#344d73; }
+        .dt-warn { color:#92400e; border-color:#fcd34d; } .dt-warn:hover { background:#fffbeb; border-color:#f59e0b; }
+        .dt-danger { color:#be123c; border-color:#fecdd3; } .dt-danger:hover { background:#fff1f2; border-color:#fb7185; }
+        .out-btn { display:inline-flex; align-items:center; justify-content:center; gap:.375rem; padding:.5rem .85rem; border-radius:.75rem; font-size:.75rem; font-weight:800; color:#fff; box-shadow:0 1px 2px rgba(0,0,0,.12); transition:filter .15s, transform .15s; white-space:nowrap; }
+        .out-btn:hover { filter:brightness(1.08); transform:translateY(-1px); }
+        .ibtn { width:2.25rem; height:2.25rem; display:inline-flex; align-items:center; justify-content:center; border-radius:.65rem; color:#3d5d8c; transition:background .15s; }
+        .ibtn:hover { background:#e4eef9; } .ibtn.danger { color:#be123c; } .ibtn.danger:hover { background:#ffe4e6; }
+        @media print {
+            @page { size: auto; margin: 8mm; }
+            html, body { height: auto !important; min-height: 0 !important; overflow: visible !important; background: #fff !important; background-image: none !important; }
+            #login-screen, #detail-modal, #toast, #app-shell > header, #app-shell > footer, #view-database { display: none !important; }
+            #app-shell main { display: block !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
+            #view-generate { display: block !important; margin: 0 !important; }
+            #view-generate > div { margin: 0 !important; padding: 0 !important; }
+            .print-wrap { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; border-radius: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+            #print-area { padding: 0 !important; margin: 0 !important; gap: 8mm !important; justify-content: flex-start !important; }
+            #print-area > div { width: auto !important; max-width: none !important; flex: 0 0 auto !important; break-inside: avoid; page-break-inside: avoid; }
+        }
+        @media (pointer: coarse) { .ibtn { width:2.5rem; height:2.5rem; } }
     </style>
 </head>
 <body class="antialiased">
@@ -211,7 +247,7 @@
                             <p class="text-xs font-semibold text-denim-100 mt-1">Posyandu Desa Gonoharjo</p>
                         </div>
                     </div>
-                    <img id="login-art" src="https://lh3.googleusercontent.com/d/1T6byGq2_yFtSkH7vc7_qLGRfh4tv-T9q" alt="Login Art" class="w-full rounded-xl shadow-xl -rotate-3 mt-2">
+                    <img id="login-art" src="https://lh3.googleusercontent.com/d/1T6byGq2_yFtSkH7vc7_qLGRfh4tv-T9q" alt="Contoh kartu KARTA" class="w-full max-w-[22rem] mx-auto lg:max-w-none rounded-xl shadow-xl -rotate-3 mt-2" onerror="this.style.display='none'">
                     <p class="text-sm leading-relaxed text-denim-50 lg:mt-auto">Sistem Cetak <strong>KARTA</strong> (Kartu Akses &amp; Rekam Terpadu Warga). Halaman ini hanya dapat dibuka oleh Admin dan Kader.</p>
                 </div>
                 <div class="lg:col-span-3 p-6 sm:p-10 flex flex-col justify-center bg-white/60">
@@ -242,6 +278,7 @@
                             <span>Masuk</span><i data-lucide="log-in" class="w-4 h-4"></i>
                         </button>
                     </form>
+                    <div class="mt-6 pt-5 border-t border-denim-200"><p class="text-[11px] font-bold text-denim-700 mb-2">Akses cepat portal GO-Positif</p><nav id="login-portals" class="grid grid-cols-4 gap-2" aria-label="Akses cepat portal"></nav></div>
                 </div>
             </div>
             <p class="mt-5 text-xs font-semibold text-denim-800 text-center">&copy; 2026 GO-POSITIF by @KreasiCahNdeso. All rights reserved.</p>
@@ -279,6 +316,7 @@
                 </button>
             </div>
         </div>
+    <div class="border-t border-denim-200/60"><nav id="hdr-portals" class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1.5 flex items-center gap-1.5 overflow-x-auto" aria-label="Pindah portal"><span class="text-[11px] font-bold text-denim-700 pr-1 shrink-0">Pindah web:</span></nav></div>
     </header>
 
     <!-- Main Container -->
@@ -313,47 +351,46 @@
                             <i data-lucide="file-text" class="w-5 h-5 text-denim-600"></i>
                             Data Identitas Kepala Keluarga
                         </h2>
-                        <span class="text-xs font-semibold text-denim-700 bg-denim-50 px-2.5 py-1 rounded-lg border border-denim-200">
-                            Format ID: GP-XXXX
-                        </span>
+                        <button type="button" onclick="resetFormToNew()" class="ibtn border border-denim-200 bg-white" title="Kosongkan formulir (data baru)" aria-label="Kosongkan formulir"><i data-lucide="eraser" class="w-4 h-4"></i></button>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
+                        <div class="sm:col-span-2">
                             <label class="block text-xs font-bold text-slate-700 mb-1">ID Kartu KARTA *</label>
                             <div class="flex gap-2">
-                                <input type="text" id="input-id" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm font-bold uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="GP-0001">
+                                <input type="text" id="input-id" maxlength="20" oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm font-bold uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="Otomatis">
                                 <button type="button" onclick="generateNextId()" title="Generate ID Otomatis" class="px-3 py-2 bg-denim-100 text-denim-700 rounded-xl hover:bg-denim-200 text-xs font-bold">
                                     Auto
                                 </button>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Wilayah Posyandu *</label>
-                            <select id="input-posyandu" onchange="updateLivePreview()" class="w-full px-3.5 py-2 text-sm rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none">
-                                <option value="POSYANDU DESA GONOHARJO">POSYANDU DESA GONOHARJO</option>
-                                <option value="POSYANDU KRAJAN">POSYANDU KRAJAN</option>
-                                <option value="POSYANDU NGLIMUT">POSYANDU NGLIMUT</option>
-                                <option value="POSYANDU KEMLOKO">POSYANDU KEMLOKO</option>
-                                <option value="POSYANDU TEMPURAN">POSYANDU TEMPURAN</option>
-                            </select>
+                        <div class="sm:col-span-3">
+                            <label for="input-posyandu" class="block text-xs font-bold text-slate-700 mb-1">Wilayah Posyandu *</label>
+                            <div class="flex items-center gap-2">
+                                <select id="input-posyandu" onchange="updateLivePreview()" class="min-w-0 flex-1 px-3.5 py-2 text-sm rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none"></select>
+                                <div class="inline-flex shrink-0 rounded-xl border border-denim-200 bg-white p-0.5" role="group" aria-label="Kelola wilayah posyandu">
+                                    <button type="button" class="ibtn" onclick="posAdd()" title="Tambah posyandu" aria-label="Tambah posyandu"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                                    <button type="button" class="ibtn" onclick="posEdit()" title="Ubah nama posyandu terpilih" aria-label="Ubah nama posyandu"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                    <button type="button" class="ibtn danger" onclick="posDel()" title="Hapus posyandu terpilih" aria-label="Hapus posyandu"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Nama Kepala Keluarga *</label>
-                        <input type="text" id="input-kk" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm font-semibold uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="Contoh: BUDI SANTOSO">
+                        <input type="text" id="input-kk" maxlength="60" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm font-semibold uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="Contoh: BUDI SANTOSO">
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-bold text-slate-700 mb-1">Dusun / Jalan *</label>
-                            <input type="text" id="input-dusun" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="DUSUN KRAJAN">
+                            <input type="text" id="input-dusun" maxlength="60" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="DUSUN KRAJAN">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">RT / RW *</label>
-                            <input type="text" id="input-rtrw" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="RT 02 / RW 01">
+                            <input type="text" id="input-rtrw" maxlength="30" required oninput="updateLivePreview()" class="w-full px-3.5 py-2 text-sm uppercase rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="RT 02 / RW 01">
                         </div>
                     </div>
 
@@ -361,7 +398,7 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">PIN Default Akses Web Sasaran *</label>
                         <div class="relative">
-                            <input type="password" id="input-pin" value="123456" oninput="updateLivePreview()" class="w-full pl-3.5 pr-11 py-2 text-sm font-bold tracking-widest rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="Masukkan 6 digit PIN">
+                            <input type="password" id="input-pin" maxlength="12" value="123456" oninput="updateLivePreview()" class="w-full pl-3.5 pr-11 py-2 text-sm font-bold tracking-widest rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none" placeholder="Masukkan 6 digit PIN">
                             <button type="button" onclick="togglePinVisibility()" id="btn-toggle-pin" title="Tampilkan / Sembunyikan PIN" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-denim-700 rounded-lg">
                                 <i data-lucide="eye" id="icon-pin-eye" class="w-4 h-4"></i>
                             </button>
@@ -410,19 +447,28 @@
                 </form>
 
                 <!-- Accordion: Pustaka Background & Logo -->
-                <details id="assets-panel" class="glass-panel rounded-2xl p-4 sm:p-5 group" open>
+                <details id="assets-panel" class="glass-panel rounded-2xl p-4 sm:p-5 group">
                     <summary class="font-bold text-sm text-slate-800 cursor-pointer flex items-center justify-between list-none">
                         <span class="flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-denim-600"></i>Background &amp; Logo Kartu</span>
-                        <span class="text-xs text-denim-600 font-semibold group-open:rotate-180 transition-transform">&#9660;</span>
+                        <span class="w-8 h-8 rounded-full bg-denim-100 text-denim-700 flex items-center justify-center group-open:rotate-180 transition-transform" aria-hidden="true"><i data-lucide="chevron-down" class="w-4 h-4"></i></span>
                     </summary>
                     <div class="mt-4 pt-3 border-t border-denim-100 space-y-4 text-xs">
                         <div>
-                            <p class="font-bold text-slate-700 mb-2">Pilih desain bawaan</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                <button type="button" onclick="applyDesignPreset('d1')" class="px-3 py-2.5 rounded-xl border border-denim-200 bg-white hover:bg-denim-50 font-bold text-denim-800 text-left">Desain 1<span class="block font-medium text-slate-500">Vektor bawaan (saat ini)</span></button>
-                                <button type="button" onclick="applyDesignPreset('d2')" class="px-3 py-2.5 rounded-xl border border-denim-200 bg-white hover:bg-denim-50 font-bold text-denim-800 text-left">Desain 2<span class="block font-medium text-slate-500">Batik: A depan, B belakang</span></button>
-                                <button type="button" onclick="applyDesignPreset('d2s')" class="px-3 py-2.5 rounded-xl border border-denim-200 bg-white hover:bg-denim-50 font-bold text-denim-800 text-left">Desain 2 (tukar)<span class="block font-medium text-slate-500">Batik: B depan, A belakang</span></button>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <p class="font-bold text-slate-700">Desain kartu <span class="font-medium text-slate-500">(klik untuk memakai)</span></p>
+                                <button type="button" id="btn-design-edit" onclick="toggleDesignTools()" aria-expanded="false" aria-controls="design-tools" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-denim-300 bg-white hover:bg-denim-50 font-bold text-denim-800 shrink-0"><i data-lucide="pencil" class="w-3.5 h-3.5"></i><span>Edit</span></button>
                             </div>
+                            <div id="design-list" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
+                            <div id="design-tools" class="hidden mt-2.5 p-2.5 rounded-2xl border border-denim-200 bg-denim-50/70 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <button type="button" onclick="saveToDesign()" class="dt-btn dt-primary col-span-2 sm:col-span-3"><i data-lucide="save"></i><span>Simpan ke desain ini</span></button>
+                                <button type="button" onclick="newDesign()" class="dt-btn"><i data-lucide="copy-plus"></i><span>Desain baru</span></button>
+                                <button type="button" onclick="renameDesign()" class="dt-btn"><i data-lucide="text-cursor-input"></i><span>Ganti nama</span></button>
+                                <button type="button" onclick="setDefaultDesign()" class="dt-btn dt-warn"><i data-lucide="star"></i><span>Jadikan default</span></button>
+                                <button type="button" onclick="exportDesigns()" class="dt-btn"><i data-lucide="download"></i><span>Unduh designs.json</span></button>
+                                <button type="button" onclick="reloadDesigns()" class="dt-btn"><i data-lucide="refresh-cw"></i><span>Muat ulang GitHub</span></button>
+                                <button type="button" onclick="deleteDesign()" class="dt-btn dt-danger"><i data-lucide="trash-2"></i><span>Hapus desain</span></button>
+                            </div>
+                            <p id="design-note" class="text-[11px] text-slate-500 mt-1.5"></p>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="p-2.5 bg-white/80 rounded-xl border border-denim-100">
@@ -445,9 +491,17 @@
                                 <div class="p-2.5 bg-white/80 rounded-xl border border-denim-100"><label class="font-bold text-slate-700 block mb-1">Logo Posyandu (Kanan)</label><input type="file" accept="image/*" onchange="handleAssetUpload(event, 'logoPosyandu')" class="w-full text-[11px]"></div>
                             </div>
                         </div>
+                        <div class="p-2.5 bg-white/80 rounded-xl border border-denim-100">
+                            <label for="link-url" class="font-bold text-slate-700 block mb-1.5">Pakai tautan gambar <span class="font-medium text-slate-500">(Google Drive, otomatis diubah ke lh3)</span></label>
+                            <div class="grid grid-cols-1 sm:grid-cols-[11rem_1fr_auto] gap-2">
+                                <select id="link-target" aria-label="Tujuan gambar" class="px-2 py-1.5 rounded-lg border border-denim-200 bg-white font-semibold"><option value="bgFront">Background Depan</option><option value="bgBack">Background Belakang</option><option value="logoDesa">Logo Desa</option><option value="logoPosyandu">Logo Posyandu</option></select>
+                                <input id="link-url" type="url" maxlength="500" placeholder="https://drive.google.com/file/d/..." class="px-2.5 py-1.5 rounded-lg border border-denim-200 bg-white">
+                                <button type="button" onclick="applyImgLink()" class="px-4 py-1.5 rounded-lg bg-denim-700 hover:bg-denim-800 text-white font-bold">Pakai</button>
+                            </div>
+                        </div>
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span id="autosave-note" class="text-denim-700 font-semibold">Pilihan desain tersimpan otomatis sebagai default di browser ini.</span>
-                            <button type="button" onclick="resetCustomAssets()" class="text-rose-600 hover:underline font-semibold">Reset ke Desain Bawaan</button>
+                            <span id="autosave-note" class="text-denim-700 font-semibold">Perubahan tersimpan sebagai draf di perangkat ini. Agar jadi default semua perangkat: Simpan ke desain ini, lalu unduh designs.json dan unggah ke GitHub.</span>
+                            <button type="button" onclick="resetWorking()" class="text-rose-600 hover:underline font-semibold">Kembalikan ke default desain ini</button>
                         </div>
                     </div>
                 </details>
@@ -456,26 +510,23 @@
             <!-- Right Column: Live Card Preview & Two Separate Modes (6 Cols) -->
             <div class="lg:col-span-6 space-y-4">
                 
-                <!-- Control Bar: 2 Tombol Terpisah (Atur Tata Letak & Mode Edit Isi Tulisan) + Print -->
-                <div class="glass-panel rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 no-print">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <!-- Tombol 1: Atur Tata Letak -->
-                        <button type="button" id="btn-mode-layout" onclick="toggleStudioMode('layout')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300">
-                            <i data-lucide="move" class="w-3.5 h-3.5"></i>
-                            <span id="lbl-mode-layout">Atur Tata Letak</span>
-                        </button>
-
-                        <!-- Tombol 2: Mode Edit Isi Tulisan -->
-                        <button type="button" id="btn-mode-text" onclick="toggleStudioMode('text')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300">
-                            <i data-lucide="type" class="w-3.5 h-3.5"></i>
-                            <span id="lbl-mode-text">Mode Edit Isi Tulisan</span>
-                        </button>
+                <!-- Control Bar: Mode (kiri) + Ekspor PNG, PDF, Print (kanan) -->
+                <div class="glass-panel rounded-2xl p-3 no-print">
+                    <div class="flex flex-wrap items-stretch justify-between gap-2.5">
+                        <div class="grid grid-cols-2 gap-2 w-full sm:w-auto lg:w-full xl:w-auto">
+                            <button type="button" id="btn-mode-layout" onclick="toggleStudioMode('layout')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300">
+                                <i data-lucide="move" class="w-3.5 h-3.5"></i><span id="lbl-mode-layout">Atur Tata Letak</span>
+                            </button>
+                            <button type="button" id="btn-mode-text" onclick="toggleStudioMode('text')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-xs bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300">
+                                <i data-lucide="type" class="w-3.5 h-3.5"></i><span id="lbl-mode-text">Edit Tulisan</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 w-full sm:w-auto lg:w-full xl:w-auto" role="group" aria-label="Ekspor dan cetak">
+                            <button type="button" onclick="exportCardAsPNG()" class="out-btn bg-sky-600"><i data-lucide="image-down" class="w-3.5 h-3.5"></i><span>PNG</span></button>
+                            <button type="button" onclick="exportCardAsPDF()" class="out-btn bg-rose-600"><i data-lucide="file-down" class="w-3.5 h-3.5"></i><span>PDF</span></button>
+                            <button type="button" onclick="prepareAndPrint()" class="out-btn bg-slate-900"><i data-lucide="printer" class="w-3.5 h-3.5"></i><span>Print</span></button>
+                        </div>
                     </div>
-
-                    <button type="button" onclick="prepareAndPrint()" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow">
-                        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                        <span>Print Kartu</span>
-                    </button>
                 </div>
 
                 <!-- Ukuran & Orientasi Kartu -->
@@ -522,6 +573,11 @@
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs items-end bg-white/70 p-2.5 rounded-xl border border-amber-200">
+                        <div class="col-span-2"><div class="flex justify-between font-bold text-slate-700 mb-1"><span>Posisi X (kiri)</span><span id="pos-x-lbl">0%</span></div><input type="range" id="pos-x" min="-10" max="100" step="0.1" value="0" oninput="setElPos('left',this.value)" class="w-full accent-amber-600"></div>
+                        <div class="col-span-2"><div class="flex justify-between font-bold text-slate-700 mb-1"><span>Posisi Y (atas)</span><span id="pos-y-lbl">0%</span></div><input type="range" id="pos-y" min="-10" max="100" step="0.1" value="0" oninput="setElPos('top',this.value)" class="w-full accent-amber-600"></div>
+                        <div class="col-span-2 sm:col-span-1"><label for="nudge-step" class="block font-bold text-slate-700 mb-1">Langkah panah</label><select id="nudge-step" class="w-full px-2 py-1.5 rounded-lg border border-amber-200 bg-white font-semibold"><option value="0.1">0,1%</option><option value="0.5">0,5%</option><option value="1" selected>1%</option><option value="2">2%</option><option value="5">5%</option></select></div>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Jenis Huruf (Font)</label>
@@ -559,25 +615,23 @@
                             <span class="font-bold text-slate-700">Gambar Dipilih (Background / Logo):</span>
                             <div id="img-chips" class="flex flex-wrap gap-1.5"></div>
                         </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="img-fit" class="block font-bold text-slate-700 mb-1">Mode Pas</label>
-                                <select id="img-fit" onchange="setImgProp('fit', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-amber-200 bg-white font-semibold">
-                                    <option value="cover">Penuh (potong tepi)</option>
-                                    <option value="contain">Utuh (tanpa potong)</option>
-                                    <option value="fill">Regang (isi penuh)</option>
-                                </select>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 items-end">
+                            <div class="col-span-2 grid grid-cols-2 gap-2">
+                                <div><label for="img-trim" class="block font-bold text-slate-700 mb-1">Pangkas margin</label>
+                                    <select id="img-trim" onchange="setImgProp('trim', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-amber-200 bg-white font-semibold disabled:opacity-50"><option value="auto">Otomatis</option><option value="0">Tidak</option></select></div>
+                                <div><label for="img-rot" class="block font-bold text-slate-700 mb-1">Putar gambar</label>
+                                    <select id="img-rot" onchange="setImgProp('rot', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-amber-200 bg-white font-semibold disabled:opacity-50"><option value="auto">Otomatis</option><option value="0">Tidak</option><option value="90">90&deg;</option></select></div>
                             </div>
                             <div><div class="flex justify-between font-bold text-slate-700 mb-1"><span>Zoom</span><span id="img-zoom-lbl">100%</span></div>
                                 <input type="range" id="img-zoom" min="50" max="300" step="2" value="100" oninput="setImgProp('zoom', this.value)" class="w-full accent-amber-600"></div>
                             <div><div class="flex justify-between font-bold text-slate-700 mb-1"><span>Geser X</span><span id="img-ox-lbl">0</span></div>
-                                <input type="range" id="img-ox" min="-50" max="50" step="1" value="0" oninput="setImgProp('ox', this.value)" class="w-full accent-amber-600"></div>
+                                <input type="range" id="img-ox" min="-100" max="100" step="1" value="0" oninput="setImgProp('ox', this.value)" class="w-full accent-amber-600"></div>
                             <div><div class="flex justify-between font-bold text-slate-700 mb-1"><span>Geser Y</span><span id="img-oy-lbl">0</span></div>
-                                <input type="range" id="img-oy" min="-50" max="50" step="1" value="0" oninput="setImgProp('oy', this.value)" class="w-full accent-amber-600"></div>
+                                <input type="range" id="img-oy" min="-100" max="100" step="1" value="0" oninput="setImgProp('oy', this.value)" class="w-full accent-amber-600"></div>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-2">
                             <p id="img-note" class="text-[11px] text-slate-500">Tip: klik area kosong kartu untuk memilih background, atau klik logo.</p>
-                            <button type="button" onclick="autoFitImg(activeImgTarget)" class="px-3 py-1.5 bg-white border border-amber-300 hover:bg-amber-100 rounded-lg font-bold text-amber-900">Sesuaikan Otomatis</button>
+                            <button type="button" onclick="autoFitImg(activeImgTarget)" class="px-3 py-1.5 bg-white border border-amber-300 hover:bg-amber-100 rounded-lg font-bold text-amber-900">Reset otomatis</button>
                         </div>
                     </div>
                 </div>
@@ -598,12 +652,17 @@
                         <div class="text-xs font-bold text-slate-700">
                             Bagian Teks Dipilih: <span id="sel-text-name" class="text-sky-700">Klik tulisan pada kartu...</span>
                         </div>
-                        <textarea id="ctrl-text-content" rows="3" oninput="updateSelectedText(this.value)" class="w-full px-3 py-2 text-xs rounded-xl border border-sky-300 bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none" placeholder="Pilih elemen tulisan pada kartu untuk mengedit isinya (tekan Enter untuk baris baru)..."></textarea>
+                        <div id="text-fields" class="space-y-2"><p class="text-xs text-slate-500">Klik tulisan pada kartu untuk mulai mengedit.</p></div>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <button type="button" onclick="resetTexts(false)" class="px-3 py-1.5 rounded-lg bg-white border border-sky-300 hover:bg-sky-100 text-xs font-bold text-sky-900 inline-flex items-center gap-1.5"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Reset bagian ini</button>
+                            <button type="button" onclick="resetTexts(true)" class="px-3 py-1.5 rounded-lg bg-white border border-rose-300 hover:bg-rose-50 text-xs font-bold text-rose-700 inline-flex items-center gap-1.5"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Reset semua tulisan ke default</button>
+                        </div>
+                        <p class="text-[11px] text-slate-500">Tips: apit kata dengan **dua bintang** untuk menebalkan. Tag HTML dihapus otomatis demi keamanan.</p>
                     </div>
                 </div>
 
                 <!-- Preview Container -->
-                <div class="glass-panel rounded-2xl p-5 sm:p-6">
+                <div class="glass-panel print-wrap rounded-2xl p-5 sm:p-6">
                     <div id="print-area" class="flex flex-col items-center gap-6">
                         
                         <!-- ==================== KARTU SISI DEPAN ==================== -->
@@ -635,7 +694,7 @@
 
                                 <!-- 2. Logo Desa Gonoharjo (Editable Text Label) -->
                                 <div id="el-f-logodesa" data-label="Logo & Teks Pemdes Gonoharjo" data-text-editable="true" class="draggable-el flex flex-col items-center" style="top: 7%; left: 4.5%; width: 19%;">
-                                    <div class="w-[13cqw] h-[13cqw] rounded-full bg-white/10 flex items-center justify-center overflow-hidden shadow-md border border-amber-300/40 pointer-events-none">
+                                    <div class="w-[13cqw] h-[13cqw] flex items-center justify-center pointer-events-none">
                                         <img id="img-logo-desa" class="hidden w-full h-full object-contain" alt="Logo Desa">
                                         <svg id="svg-logo-desa" viewBox="0 0 100 100" class="w-full h-full">
                                             <circle cx="50" cy="50" r="47" fill="#10375c" stroke="#eab308" stroke-width="4"/>
@@ -653,15 +712,15 @@
 
                                 <!-- 3. Center Title KARTA (Editable Text) -->
                                 <div id="el-f-title" data-label="Judul & Subjudul KARTA" data-text-editable="true" class="draggable-el text-center" style="top: 11%; left: 23.5%; width: 52%;">
-                                    <div class="editable-target">
-                                        <h2 class="c-title font-extrabold">KARTA</h2>
-                                        <p class="c-subtitle font-medium mt-[0.8cqw] tracking-tight">(Kartu Akses & Rekam Terpadu Warga)</p>
+                                    <div>
+                                        <h2 class="c-title font-extrabold editable-target" data-f="Judul">KARTA</h2>
+                                        <p class="c-subtitle font-medium mt-[0.8cqw] tracking-tight editable-target" data-f="Subjudul">(Kartu Akses & Rekam Terpadu Warga)</p>
                                     </div>
                                 </div>
 
                                 <!-- 4. Logo Posyandu (Editable Text Label) -->
                                 <div id="el-f-logopos" data-label="Logo & Teks Posyandu" data-text-editable="true" class="draggable-el flex flex-col items-center" style="top: 7.5%; left: 75.5%; width: 20.5%;">
-                                    <div class="w-[12.2cqw] h-[12.2cqw] rounded-full bg-white/10 flex items-center justify-center overflow-hidden pointer-events-none">
+                                    <div class="w-[12.2cqw] h-[12.2cqw] flex items-center justify-center pointer-events-none">
                                         <img id="img-logo-posyandu" class="hidden w-full h-full object-contain" alt="Logo Posyandu">
                                         <svg id="svg-logo-posyandu" viewBox="0 0 100 100" class="w-full h-full">
                                             <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#16a34a" stroke-width="3"/>
@@ -685,21 +744,21 @@
                                 </div>
 
                                 <!-- 6. Data Box Nama & Alamat (LOCKED FROM TEXT EDIT - From Form) -->
-                                <div id="el-f-databox" data-label="Kotak Nama & Alamat (Terkunci dari Form)" data-text-editable="false" class="draggable-el bg-[#082f42]/75 border border-teal-400/25 rounded-[2.2cqw] p-[2.5cqw] shadow-inner" style="top: 43.5%; left: 34.5%; width: 59%;">
+                                <div id="el-f-databox" data-label="Kotak Nama & Alamat (isi dari Form)" data-text-editable="true" class="draggable-el bg-[#082f42]/75 border border-teal-400/25 rounded-[2.2cqw] p-[2.5cqw] shadow-inner" style="top: 43.5%; left: 34.5%; width: 59%;">
                                     <div class="mb-[1.3cqw]">
-                                        <div class="c-label font-medium">nama:</div>
+                                        <div class="c-label font-medium editable-target" data-f="Label nama">nama:</div>
                                         <div id="prev-kk-name" class="c-value-name font-extrabold uppercase tracking-wide truncate">BUDI SANTOSO</div>
                                     </div>
                                     <div>
-                                        <div class="c-label font-medium">alamat:</div>
+                                        <div class="c-label font-medium editable-target" data-f="Label alamat">alamat:</div>
                                         <div id="prev-alamat" class="c-value-addr font-bold uppercase">DUSUN KRAJAN, RT 02 / RW 01</div>
                                     </div>
                                 </div>
 
                                 <!-- 7. Bottom Footer Front (Editable Text) -->
                                 <div id="el-f-footer" data-label="Footer Sisi Depan" data-text-editable="true" class="draggable-el pt-[0.7cqw] border-t border-white/60 flex items-center justify-between" style="top: 90%; left: 4.5%; width: 91%;">
-                                    <span class="c-footer font-medium editable-target">Copyright @KreasiCahNdeso</span>
-                                    <span class="c-footer font-semibold">Gonoharjo, Limbangan - Kab. KENDAL</span>
+                                    <span class="c-footer font-medium editable-target" data-f="Footer kiri">Copyright @KreasiCahNdeso</span>
+                                    <span class="c-footer font-semibold editable-target" data-f="Footer kanan (alamat desa)">Gonoharjo, Limbangan - Kab. KENDAL</span>
                                 </div>
                             </div>
                         </div>
@@ -725,41 +784,38 @@
 
                                 <!-- 2. Panduan Penggunaan -->
                                 <div id="el-b-panduan" data-label="Teks Panduan Penggunaan" data-text-editable="true" class="draggable-el" style="top: 9.5%; left: 6%; width: 88%;">
-                                    <div class="editable-target">
-                                        <h3 class="cb-heading font-extrabold tracking-wide mb-[1cqw]">PANDUAN PENGGUNAAN KARTA:</h3>
+                                    <div>
+                                        <h3 class="cb-heading font-extrabold tracking-wide mb-[1cqw] editable-target" data-f="Judul panduan">PANDUAN PENGGUNAAN KARTA:</h3>
                                         <ol class="cb-list list-decimal pl-[3.6cqw] space-y-[0.55cqw] font-medium">
-                                            <li>Kartu ini identitas resmi warga untuk pelayanan terpadu desa dan posyandu.</li>
-                                            <li>Tunjukkan kartu ini kepada petugas desa/kader posyandu untuk discan rekam data anda.</li>
-                                            <li>Akses Layanan Mandiri Online dapat dengan mengakses <strong>WEB POSYANDU</strong> dan <strong>WEB PELAYANAN DESA</strong>.</li>
+                                            <li class="editable-target" data-f="Butir 1">Kartu ini identitas resmi warga untuk pelayanan terpadu desa dan posyandu.</li>
+                                            <li class="editable-target" data-f="Butir 2">Tunjukkan kartu ini kepada petugas desa/kader posyandu untuk discan rekam data anda.</li>
+                                            <li class="editable-target" data-f="Butir 3">Akses Layanan Mandiri Online dapat dengan mengakses <strong>WEB POSYANDU</strong> dan <strong>WEB PELAYANAN DESA</strong>.</li>
                                         </ol>
                                     </div>
                                 </div>
 
                                 <!-- 3. Highlight Box ID & PIN (ID Terkunci dari Form) -->
-                                <div id="el-b-idbox" data-label="Kotak ID Akses Web & PIN (ID Terkunci)" data-text-editable="false" class="draggable-el bg-[#082f42]/82 border border-teal-300/25 rounded-[2cqw] px-[3.2cqw] py-[1.6cqw] shadow-inner" style="top: 44.5%; left: 6%; width: 88%;">
+                                <div id="el-b-idbox" data-label="Kotak ID Akses Web & PIN (isi dari Form)" data-text-editable="true" class="draggable-el bg-[#082f42]/82 border border-teal-300/25 rounded-[2cqw] px-[3.2cqw] py-[1.6cqw] shadow-inner" style="top: 44.5%; left: 6%; width: 88%;">
                                     <div class="cb-box-text font-extrabold tracking-wide">
                                         <div class="flex items-center">
-                                            <span class="w-[33%]">ID AKSES WEB</span>
+                                            <span class="w-[33%] editable-target" data-f="Label ID akses">ID AKSES WEB</span>
                                             <span>: <span id="prev-back-id">GP-0001</span></span>
                                         </div>
                                         <div class="flex items-center mt-[0.35cqw]">
-                                            <span class="w-[33%]">PIN DEFAULT</span>
-                                            <span>: <span id="prev-back-pin">******</span> <span class="font-normal cb-box-sub">(PIN default diberikan terpisah)</span></span>
+                                            <span class="w-[33%] editable-target" data-f="Label PIN">PIN DEFAULT</span>
+                                            <span>: <span id="prev-back-pin">******</span> <span class="font-normal cb-box-sub editable-target" data-f="Catatan PIN">(PIN default diberikan terpisah)</span></span>
                                         </div>
-                                    </div>
-                                    <div class="cb-box-sub font-semibold mt-[1cqw] text-teal-100">
-                                        Bisa akses melalui <strong class="text-white">WEB POSYANDU & WEB PELAYANAN DESA.</strong>
                                     </div>
                                 </div>
 
                                 <!-- 4. Return Notice & WhatsApp Layanan KARTA (Editable in Mode Edit Isi Tulisan) -->
                                 <div id="el-b-notice" data-label="Keterangan Pengembalian & WhatsApp Layanan KARTA" data-text-editable="true" class="draggable-el text-center px-1" style="top: 68.5%; left: 5%; width: 90%;">
-                                    <div class="editable-target">
-                                        <p class="cb-notice font-medium">
+                                    <div>
+                                        <p class="cb-notice font-medium editable-target" data-f="Keterangan pengembalian">
                                             Jika menemukan kartu ini, harap mengembalikan ke Balai Desa<br>
                                             Gonoharjo/Petugas Desa Gonoharjo/Kader POSYANDU Gonoharjo.
                                         </p>
-                                        <p class="cb-wa font-bold mt-[0.45cqw] tracking-wide">
+                                        <p class="cb-wa font-bold mt-[0.45cqw] tracking-wide editable-target" data-f="WhatsApp layanan">
                                             WhatsApp Layanan KARTA : 0812-XXXX-XXXX
                                         </p>
                                     </div>
@@ -767,8 +823,8 @@
 
                                 <!-- 5. Bottom Footer Back -->
                                 <div id="el-b-footer" data-label="Footer Sisi Belakang" data-text-editable="true" class="draggable-el pt-[0.7cqw] border-t border-white/60 flex items-center justify-between" style="top: 90%; left: 4.5%; width: 91%;">
-                                    <span class="c-footer font-medium editable-target">Copyright @KreasiCahNdeso</span>
-                                    <span class="c-footer font-semibold">Gonoharjo, Limbangan - Kab. KENDAL</span>
+                                    <span class="c-footer font-medium editable-target" data-f="Footer kiri">Copyright @KreasiCahNdeso</span>
+                                    <span class="c-footer font-semibold editable-target" data-f="Footer kanan (alamat desa)">Gonoharjo, Limbangan - Kab. KENDAL</span>
                                 </div>
                             </div>
                         </div>
@@ -808,11 +864,6 @@
                     <div>
                         <select id="filter-posyandu" onchange="renderDatabaseTable()" class="w-full px-3.5 py-2 text-sm rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none">
                             <option value="">Semua Wilayah Posyandu</option>
-                            <option value="POSYANDU DESA GONOHARJO">POSYANDU DESA GONOHARJO</option>
-                            <option value="POSYANDU KRAJAN">POSYANDU KRAJAN</option>
-                            <option value="POSYANDU NGLIMUT">POSYANDU NGLIMUT</option>
-                            <option value="POSYANDU KEMLOKO">POSYANDU KEMLOKO</option>
-                            <option value="POSYANDU TEMPURAN">POSYANDU TEMPURAN</option>
                         </select>
                     </div>
 
@@ -826,7 +877,7 @@
             <!-- Tabel Data Warga Ringkas -->
             <div class="glass-panel rounded-2xl overflow-hidden border border-denim-200/80">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full min-w-[640px] text-left border-collapse">
                         <thead>
                             <tr class="bg-denim-900 text-white text-xs uppercase tracking-wider">
                                 <th class="py-3.5 px-4 font-bold">ID KARTA</th>
@@ -929,7 +980,7 @@
             </div>
 
             <!-- Modal Body -->
-            <div class="p-5 sm:p-6 space-y-5 max-h-[82vh] overflow-y-auto">
+            <div class="p-5 sm:p-6 space-y-5 max-h-[78dvh] overflow-y-auto">
                 
                 <!-- Action Toolbar di dalam Modal -->
                 <div class="flex flex-wrap items-center gap-2 bg-denim-50 p-3 rounded-2xl border border-denim-200">
@@ -1056,25 +1107,7 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
         let layoutConfig = JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
         let currentModalRecordId = null;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-            initAuth();
-            syncCategoriesFromKaderAndStorage();
-            loadRecords();
-            initLayoutDefaults();
-            loadCardCfg();
-            loadImgCfg();
-            applyCardSize(true);
-            initDragAndSelect();
-            initImgUI();
-
-            if (kartaRecords.length > 0) {
-                populateFormForPreviewOnly(kartaRecords[0]);
-            } else {
-                addMemberRow("BUDI SANTOSO", "Kepala Keluarga", "Usia Produktif");
-            }
-            renderDatabaseTable();
-        });
+        
 
         // ================= SINKRONISASI KATEGORI OTOMATIS DARI WEB KADER =================
         function syncCategoriesFromKaderAndStorage() {
@@ -1085,41 +1118,19 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             const urlParams = new URLSearchParams(window.location.search);
             const urlCat = urlParams.get("new_cat");
 
-            const merged = new Set([...BASE_CATEGORIES, ...customSaved, ...kaderSharedCats]);
-            if (urlCat && urlCat.trim()) {
-                merged.add(urlCat.trim());
-                customSaved.push(urlCat.trim());
+            const merged = new Set([...BASE_CATEGORIES, ...customSaved.map(c => cleanTxt(c, 40)), ...kaderSharedCats.map(c => cleanTxt(c, 40))].filter(Boolean));
+            const urlClean = urlCat ? cleanTxt(urlCat, 40) : "";
+            if (urlClean) {
+                merged.add(urlClean);
+                customSaved.push(urlClean);
                 localStorage.setItem("karta_custom_categories", JSON.stringify([...new Set(customSaved)]));
             }
             availableCategories = Array.from(merged);
         }
 
-        function promptAddCustomCategory() {
-            const newCat = prompt("Masukkan nama kategori sasaran baru (akan otomatis muncul di pilihan anggota keluarga):");
-            if (!newCat || !newCat.trim()) return;
-            const cleanCat = newCat.trim();
-            if (!availableCategories.includes(cleanCat)) {
-                availableCategories.push(cleanCat);
-                const customSaved = JSON.parse(localStorage.getItem("karta_custom_categories") || "[]");
-                customSaved.push(cleanCat);
-                localStorage.setItem("karta_custom_categories", JSON.stringify(customSaved));
-                // Simpan juga ke shared key agar sinkron dengan Web Kader
-                localStorage.setItem("gopositif_kader_categories", JSON.stringify(availableCategories));
-                refreshAllCategoryDropdowns();
-                showToast(`Kategori "${cleanCat}" berhasil ditambahkan!`);
-            } else {
-                showToast("Kategori tersebut sudah ada dalam daftar.");
-            }
-        }
 
-        function refreshAllCategoryDropdowns() {
-            document.querySelectorAll(".m-cat").forEach(select => {
-                const currentVal = select.value;
-                select.innerHTML = availableCategories.map(opt => 
-                    `<option value="${opt}" ${opt === currentVal ? 'selected' : ''}>${opt}</option>`
-                ).join("");
-            });
-        }
+
+
 
         // ================= TOGGLE MATA PIN DEFAULT =================
         function togglePinVisibility() {
@@ -1151,10 +1162,10 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
                 body.classList.remove("layout-mode-active", "text-edit-mode-active");
                 panelLayout.classList.add("hidden");
                 panelText.classList.add("hidden");
-                btnLayout.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300";
-                btnText.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300";
+                btnLayout.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300";
+                btnText.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-xs bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300";
                 lblLayout.textContent = "Atur Tata Letak";
-                lblText.textContent = "Mode Edit Isi Tulisan";
+                lblText.textContent = "Edit Tulisan";
                 clearSelectedHighlight();
                 saveLayoutToStorage();
                 showToast("Pengaturan kartu disimpan!");
@@ -1170,10 +1181,10 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
                 panelLayout.classList.remove("hidden");
                 panelText.classList.add("hidden");
 
-                btnLayout.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow bg-amber-500 text-slate-950 border border-amber-600";
-                lblLayout.textContent = "Selesai Tata Letak";
-                btnText.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300";
-                lblText.textContent = "Mode Edit Isi Tulisan";
+                btnLayout.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow bg-amber-500 text-slate-950 border border-amber-600";
+                lblLayout.textContent = "Selesai";
+                btnText.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-xs bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300";
+                lblText.textContent = "Edit Tulisan";
                 showToast("Mode Atur Tata Letak Aktif: Seret elemen pada kartu.");
             } else if (mode === "text") {
                 body.classList.add("text-edit-mode-active");
@@ -1181,9 +1192,9 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
                 panelText.classList.remove("hidden");
                 panelLayout.classList.add("hidden");
 
-                btnText.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow bg-sky-600 text-white border border-sky-700";
-                lblText.textContent = "Selesai Edit Tulisan";
-                btnLayout.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300";
+                btnText.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow bg-sky-600 text-white border border-sky-700";
+                lblText.textContent = "Selesai";
+                btnLayout.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300";
                 lblLayout.textContent = "Atur Tata Letak";
                 showToast("Mode Edit Tulisan Aktif: Klik teks berbingkai biru pada kartu.");
             }
@@ -1230,6 +1241,7 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
                         if (!layoutConfig[el.id]) layoutConfig[el.id] = { scale: 1 };
                         layoutConfig[el.id].left = parseFloat(newLeft.toFixed(2));
                         layoutConfig[el.id].top = parseFloat(newTop.toFixed(2));
+                        syncPosControls();
                     };
 
                     const onPointerUp = () => {
@@ -1249,44 +1261,9 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             selectedElId = null;
         }
 
-        function selectElementForEdit(elId) {
-            clearSelectedHighlight();
-            selectedElId = elId;
-            const el = document.getElementById(elId);
-            if (!el) return;
-            el.classList.add("selected-el");
 
-            const label = el.getAttribute("data-label") || elId;
-            document.getElementById("sel-layout-name").textContent = label;
-            document.getElementById("sel-text-name").textContent = label;
-            if (EL_TO_IMG[elId]) selectImgTarget(EL_TO_IMG[elId]);
 
-            const cfg = layoutConfig[elId] || { scale: 1, fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#ffffff" };
-            const scalePct = Math.round((cfg.scale || 1) * 100);
-            document.getElementById("ctrl-scale").value = scalePct;
-            document.getElementById("ctrl-scale-label").textContent = scalePct + "%";
-            document.getElementById("ctrl-font-family").value = cfg.fontFamily || "'Plus Jakarta Sans', sans-serif";
-            if (cfg.color) document.getElementById("ctrl-color").value = cfg.color;
 
-            if (el.getAttribute("data-text-editable") === "true") {
-                const target = el.querySelector(".editable-target") || el;
-                document.getElementById("ctrl-text-content").value = target.innerText.trim();
-            }
-        }
-
-        function nudgeElement(dx, dy) {
-            if (!selectedElId) return showToast("Klik salah satu elemen di kartu terlebih dahulu!");
-            const el = document.getElementById(selectedElId);
-            const curLeft = parseFloat(el.style.left) || 0;
-            const curTop = parseFloat(el.style.top) || 0;
-            const newLeft = parseFloat((curLeft + dx).toFixed(2));
-            const newTop = parseFloat((curTop + dy).toFixed(2));
-            el.style.left = newLeft + "%";
-            el.style.top = newTop + "%";
-            layoutConfig[selectedElId].left = newLeft;
-            layoutConfig[selectedElId].top = newTop;
-            saveLayoutToStorage();
-        }
 
         function updateSelectedStyle(prop, val) {
             if (!selectedElId) return showToast("Klik elemen di kartu terlebih dahulu!");
@@ -1320,16 +1297,7 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             saveLayoutToStorage();
         }
 
-        function updateSelectedText(val) {
-            if (!selectedElId) return;
-            const el = document.getElementById(selectedElId);
-            if (el.getAttribute("data-text-editable") !== "true") return;
-            const target = el.querySelector(".editable-target") || el;
-            target.innerHTML = val.replace(/\n/g, "<br>");
-            layoutConfig[selectedElId].customHtml = target.innerHTML;
-            try { const t = JSON.parse(localStorage.getItem("karta_texts_v1") || "{}"); t[selectedElId] = target.innerHTML; localStorage.setItem("karta_texts_v1", JSON.stringify(t)); } catch (e) {}
-            saveLayoutToStorage();
-        }
+
 
         function layoutKey() { return "karta_gonoharjo_layout_v4_" + orientKey(); }
         function saveLayoutToStorage() {
@@ -1360,37 +1328,9 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
         }
 
         // Terapkan tata letak sesuai orientasi aktif (default + hasil simpanan pengguna)
-        function applyLayout() {
-            const portrait = orientKey() === "p";
-            let saved = {}, texts = {};
-            try { saved = JSON.parse(localStorage.getItem(layoutKey()) || (!portrait ? localStorage.getItem("karta_gonoharjo_layout_v3") : null) || "{}"); } catch (e) {}
-            try { texts = JSON.parse(localStorage.getItem("karta_texts_v1") || "{}"); } catch (e) {}
-            layoutConfig = {};
-            Object.keys(DEFAULT_LAYOUT).forEach(id => {
-                const cfg = layoutConfig[id] = Object.assign({}, DEFAULT_LAYOUT[id], portrait ? PORTRAIT_LAYOUT[id] : {}, saved[id] || {});
-                if (texts[id]) cfg.customHtml = texts[id];
-                const el = document.getElementById(id);
-                if (!el) return;
-                el.style.top = cfg.top + "%";
-                el.style.left = cfg.left + "%";
-                el.style.width = cfg.width + "%";
-                el.style.transform = (cfg.scale && cfg.scale !== 1) ? `scale(${cfg.scale})` : "";
-                el.style.transformOrigin = "top center";
-                el.style.fontFamily = cfg.fontFamily || "";
-                el.style.color = cfg.color || "";
-                el.querySelectorAll("*").forEach(c => c.style.color = cfg.color || "");
-                if (cfg.customHtml && el.getAttribute("data-text-editable") === "true") {
-                    (el.querySelector(".editable-target") || el).innerHTML = cfg.customHtml;
-                }
-            });
-        }
 
-        function resetAllLayout() {
-            localStorage.removeItem(layoutKey());
-            localStorage.removeItem("karta_texts_v1");
-            if (orientKey() === "l") localStorage.removeItem("karta_gonoharjo_layout_v3");
-            location.reload();
-        }
+
+
 
         // ================= UKURAN & ORIENTASI KARTU =================
         const CARD_PRESETS = {
@@ -1435,7 +1375,7 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             document.getElementById("card-size-info").textContent = `Ukuran cetak ${w.toFixed(1)} × ${h.toFixed(1)} mm • ${portrait ? "Potret" : "Landscape"} • tata letak menyesuaikan otomatis (tetap bisa digeser manual).`;
             applyLayout();
             if (!initial) {
-                ["bgFront", "bgBack"].forEach(k => { if (!imgCfg[k].manual) autoFitImg(k); });
+                ["bgFront", "bgBack"].forEach(applyBg);
                 try { localStorage.setItem("karta_card_cfg_v1", JSON.stringify(cardCfg)); } catch (e) {}
                 showToast(`Ukuran kartu: ${w.toFixed(1)} × ${h.toFixed(1)} mm (${portrait ? "Potret" : "Landscape"})`);
             }
@@ -1447,16 +1387,7 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
         }
 
         // ================= STORAGE & FORM DATA =================
-        function loadRecords() {
-            const saved = localStorage.getItem("karta_gonoharjo_db_v3");
-            if (saved) {
-                kartaRecords = JSON.parse(saved);
-            } else {
-                kartaRecords = [...DEMO_DATA];
-                saveRecordsToStorage();
-            }
-            updateBadgeCount();
-        }
+
 
         function saveRecordsToStorage() {
             localStorage.setItem("karta_gonoharjo_db_v3", JSON.stringify(kartaRecords));
@@ -1487,38 +1418,7 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             }
         }
 
-        function addMemberRow(name = "", relation = "Anggota", category = "Balita") {
-            const container = document.getElementById("members-container");
-            const row = document.createElement("div");
-            row.className = "member-row bg-denim-50/70 border border-denim-200/80 rounded-xl p-2.5 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center";
 
-            // Pastikan kategori lama atau baru tetap terpilih
-            const listCats = availableCategories.includes(category) ? availableCategories : [...availableCategories, category];
-            const optionsHtml = listCats.map(opt => 
-                `<option value="${opt}" ${opt === category ? 'selected' : ''}>${opt}</option>`
-            ).join("");
-
-            row.innerHTML = `
-                <div class="sm:col-span-5">
-                    <input type="text" class="m-name w-full px-2.5 py-1.5 text-xs font-semibold uppercase rounded-lg border border-denim-200 bg-white" placeholder="Nama Lengkap Anggota" value="${name}" required>
-                </div>
-                <div class="sm:col-span-3">
-                    <input type="text" class="m-rel w-full px-2 py-1.5 text-xs rounded-lg border border-denim-200 bg-white" placeholder="Status Keluarga" value="${relation}">
-                </div>
-                <div class="sm:col-span-3">
-                    <select class="m-cat w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-denim-200 bg-white">
-                        ${optionsHtml}
-                    </select>
-                </div>
-                <div class="sm:col-span-1 flex justify-end">
-                    <button type="button" onclick="this.closest('.member-row').remove()" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Anggota">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            `;
-            container.appendChild(row);
-            lucide.createIcons();
-        }
 
         function populateFormForPreviewOnly(record) {
             document.getElementById("input-id").value = record.id;
@@ -1561,39 +1461,26 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             editingId = null;
             document.getElementById("edit-mode-banner").classList.add("hidden");
             document.getElementById("btn-submit-text").textContent = "Simpan ke Database & Siapkan Cetak";
-            
-            generateNextId();
-            document.getElementById("input-kk").value = "";
-            document.getElementById("input-dusun").value = "DUSUN KRAJAN";
-            document.getElementById("input-rtrw").value = "RT 01 / RW 01";
-            document.getElementById("input-pin").value = "123456";
-            
-            const container = document.getElementById("members-container");
-            container.innerHTML = "";
+            ["input-id", "input-kk", "input-dusun", "input-rtrw", "input-pin"].forEach(i => document.getElementById(i).value = "");
+            document.getElementById("input-pin").placeholder = "Kosong = 123456";
+            document.getElementById("members-container").innerHTML = "";
             addMemberRow("", "Kepala Keluarga", "Usia Produktif");
-            
             updateLivePreview();
         }
 
-        function generateNextId() {
-            let maxNum = 0;
-            kartaRecords.forEach(r => {
-                const match = r.id.match(/GP-(\d+)/i);
-                if (match) {
-                    const num = parseInt(match[1], 10);
-                    if (num > maxNum) maxNum = num;
-                }
-            });
-            const nextId = "GP-" + String(maxNum + 1).padStart(4, "0");
-            document.getElementById("input-id").value = nextId;
-            updateLivePreview();
+        function nextId() {
+            let m = 0;
+            kartaRecords.forEach(r => { const x = r.id.match(/GP-(\d+)/i); if (x) m = Math.max(m, parseInt(x[1], 10)); });
+            return "GP-" + String(m + 1).padStart(4, "0");
         }
+        function generateNextId() { document.getElementById("input-id").value = nextId(); updateLivePreview(); }
 
         function updateLivePreview() {
-            const idVal = (document.getElementById("input-id").value || "GP-0001").toUpperCase();
+            const idVal = (document.getElementById("input-id").value || nextId()).toUpperCase();
+            document.getElementById("input-id").placeholder = nextId() + " (otomatis)";
             const kkVal = (document.getElementById("input-kk").value || "NAMA KEPALA KELUARGA").toUpperCase();
-            const dusunVal = (document.getElementById("input-dusun").value || "DUSUN KRAJAN").toUpperCase();
-            const rtrwVal = (document.getElementById("input-rtrw").value || "RT 02 / RW 01").toUpperCase();
+            const dusunVal = (document.getElementById("input-dusun").value || "DUSUN / JALAN").toUpperCase();
+            const rtrwVal = (document.getElementById("input-rtrw").value || "RT 00 / RW 00").toUpperCase();
             const posyanduVal = (document.getElementById("input-posyandu").value || "POSYANDU DESA GONOHARJO").toUpperCase();
 
             document.getElementById("prev-id-text").textContent = idVal;
@@ -1601,12 +1488,12 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             document.getElementById("prev-alamat").textContent = `${dusunVal}, ${rtrwVal}`;
 
             const posyanduEl = document.getElementById("prev-posyandu-name");
-            if (!layoutConfig["el-f-logopos"]?.customHtml) {
+            if ((textsCfg["el-f-logopos"] || {})[0] == null) {
                 if (posyanduVal === "POSYANDU DESA GONOHARJO") {
                     posyanduEl.innerHTML = `POSYANDU<br><span class="c-posyandu-sub font-semibold">DESA GONOHARJO</span>`;
                 } else {
                     const subName = posyanduVal.replace("POSYANDU ", "");
-                    posyanduEl.innerHTML = `POSYANDU<br><span class="c-posyandu-sub font-semibold">${subName}</span>`;
+                    posyanduEl.innerHTML = `POSYANDU<br><span class="c-posyandu-sub font-semibold">${esc(subName)}</span>`;
                 }
             }
 
@@ -1628,122 +1515,10 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             if (qrCanvas) { qrCanvas.style.width = "100%"; qrCanvas.style.height = "100%"; }
         }
 
-        function saveKartaData(e) {
-            e.preventDefault();
-            const idVal = document.getElementById("input-id").value.trim().toUpperCase();
-            const kkVal = document.getElementById("input-kk").value.trim().toUpperCase();
-            const dusunVal = document.getElementById("input-dusun").value.trim().toUpperCase();
-            const rtrwVal = document.getElementById("input-rtrw").value.trim().toUpperCase();
-            const posyanduVal = document.getElementById("input-posyandu").value;
-            const pinVal = document.getElementById("input-pin").value.trim();
 
-            const memberRows = document.querySelectorAll(".member-row");
-            const members = [];
-            memberRows.forEach(row => {
-                const mName = row.querySelector(".m-name").value.trim().toUpperCase();
-                const mRel = row.querySelector(".m-rel").value.trim();
-                const mCat = row.querySelector(".m-cat").value;
-                if (mName) {
-                    members.push({ name: mName, relation: mRel, category: mCat });
-                }
-            });
-
-            const newRecord = {
-                id: idVal,
-                kk: kkVal,
-                dusun: dusunVal,
-                rtrw: rtrwVal,
-                posyandu: posyanduVal,
-                pin: pinVal,
-                updatedAt: new Date().toISOString().split("T")[0],
-                members: members
-            };
-
-            if (editingId) {
-                const idx = kartaRecords.findIndex(r => r.id === editingId);
-                if (idx !== -1) kartaRecords[idx] = newRecord;
-                editingId = idVal;
-                document.getElementById("edit-mode-id").textContent = idVal;
-                showToast(`Data kartu ${idVal} berhasil diperbarui!`);
-            } else {
-                const existIdx = kartaRecords.findIndex(r => r.id === idVal);
-                if (existIdx !== -1) {
-                    kartaRecords[existIdx] = newRecord;
-                    showToast(`Data kartu ${idVal} diperbarui!`);
-                } else {
-                    kartaRecords.unshift(newRecord);
-                    showToast(`Kartu baru ${idVal} (${kkVal}) berhasil dibuat!`);
-                }
-            }
-
-            saveRecordsToStorage();
-            updateLivePreview();
-            renderDatabaseTable();
-        }
 
         // ================= TAB 2: TABEL RINGKAS RIBUAN DATA & MODAL DETAIL =================
-        function renderDatabaseTable() {
-            const tbody = document.getElementById("database-tbody");
-            const footerInfo = document.getElementById("table-footer-info");
-            const qSearch = (document.getElementById("filter-search").value || "").toLowerCase();
-            const qPosyandu = document.getElementById("filter-posyandu").value;
-            const qAlamat = (document.getElementById("filter-alamat").value || "").toLowerCase();
 
-            const filtered = kartaRecords.filter(r => {
-                const matchSearch = r.id.toLowerCase().includes(qSearch) || r.kk.toLowerCase().includes(qSearch);
-                const matchPosyandu = !qPosyandu || r.posyandu === qPosyandu;
-                const fullAddr = `${r.dusun} ${r.rtrw}`.toLowerCase();
-                const matchAlamat = !qAlamat || fullAddr.includes(qAlamat);
-                return matchSearch && matchPosyandu && matchAlamat;
-            });
-
-            footerInfo.innerHTML = `<span>Menampilkan <strong>${filtered.length}</strong> dari <strong>${kartaRecords.length}</strong> total kartu KARTA terdaftar</span>`;
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="py-8 text-center text-slate-500 font-semibold">
-                            Tidak ada data kartu KARTA yang cocok dengan pencarian Anda.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = filtered.map(r => `
-                <tr class="hover:bg-denim-50/80 transition">
-                    <td class="py-3 px-4 whitespace-nowrap">
-                        <span class="px-2.5 py-1 bg-slate-900 text-amber-300 font-extrabold text-xs rounded-lg tracking-wider">
-                            ${r.id}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 font-extrabold text-slate-900">
-                        ${r.kk}
-                    </td>
-                    <td class="py-3 px-4 text-slate-700">
-                        ${r.dusun}, ${r.rtrw}
-                    </td>
-                    <td class="py-3 px-4">
-                        <span class="px-2.5 py-0.5 text-[11px] font-bold bg-denim-100 text-denim-800 rounded-md">
-                            ${r.posyandu}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 text-center whitespace-nowrap">
-                        <div class="inline-flex items-center gap-1.5">
-                            <button onclick="openDetailModal('${r.id}')" class="px-3 py-1.5 bg-denim-700 hover:bg-denim-800 text-white font-bold text-xs rounded-xl inline-flex items-center gap-1.5 shadow-xs transition">
-                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                Detail & Cetak
-                            </button>
-                            <button onclick="deleteRecord('${r.id}')" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Data">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join("");
-
-            lucide.createIcons();
-        }
 
         function openDetailModal(id) {
             const record = kartaRecords.find(r => r.id === id);
@@ -1774,11 +1549,11 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             membersList.innerHTML = record.members.map((m, idx) => `
                 <div class="flex items-center justify-between text-xs py-1.5 px-3 rounded-xl bg-white border border-slate-200">
                     <div>
-                        <span class="font-bold text-slate-800">${idx + 1}. ${m.name}</span>
-                        <span class="text-slate-500 ml-1">(${m.relation})</span>
+                        <span class="font-bold text-slate-800">${idx + 1}. ${esc(m.name)}</span>
+                        <span class="text-slate-500 ml-1">(${esc(m.relation)})</span>
                     </div>
                     <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-denim-100 text-denim-800">
-                        ${m.category}
+                        ${esc(m.category)}
                     </span>
                 </div>
             `).join("");
@@ -1816,209 +1591,50 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             document.getElementById("detail-modal").classList.add("hidden");
         }
 
-        // ================= EKSPOR PNG & PDF DARI MODAL DETAIL =================
+        // ================= EKSPOR PNG & PDF (pratinjau utama, atau kartu di modal bila terbuka) =================
+        function exportTargets() {
+            const m = !document.getElementById("detail-modal").classList.contains("hidden");
+            return { f: document.getElementById(m ? "modal-card-front" : "card-front"), b: document.getElementById(m ? "modal-card-back" : "card-back"),
+                     id: m ? currentModalRecordId : (cleanId(document.getElementById("input-id").value) || "KARTA") };
+        }
+        async function exportPrep() { if (activeStudioMode) toggleStudioMode(activeStudioMode); try { await document.fonts.ready; } catch (e) {} }
+        function snapCard(el) {
+            const sc = Math.min(6, Math.max(2, (cardDims().w / 25.4 * 300) / (el.offsetWidth || 520)));   // ~300 dpi
+            return html2canvas(el, { scale: sc, useCORS: true, backgroundColor: null, logging: false, onclone: (d, c) => {
+                c = c || d.getElementById(el.id); if (!c) return;
+                c.style.borderRadius = "0"; c.style.boxShadow = "none"; c.style.border = "0"; c.classList.remove("bg-sel");
+            } });
+        }
+        function dlCanvas(cv, name) { const a = document.createElement("a"); a.download = name; a.href = cv.toDataURL("image/png"); a.click(); }
+
         async function exportCardAsPNG() {
-            const frontEl = document.getElementById("modal-card-front");
-            const backEl = document.getElementById("modal-card-back");
-            if (!frontEl || !backEl) return;
-
-            showToast("Menyiapkan gambar PNG resolusi tinggi...");
-            const canvasFront = await html2canvas(frontEl, { scale: 3, useCORS: true });
-            const canvasBack = await html2canvas(backEl, { scale: 3, useCORS: true });
-
-            // Gabungkan Depan & Belakang dalam 1 PNG atau unduh keduanya
-            const linkF = document.createElement("a");
-            linkF.download = `KARTA_${currentModalRecordId}_DEPAN.png`;
-            linkF.href = canvasFront.toDataURL("image/png");
-            linkF.click();
-
-            setTimeout(() => {
-                const linkB = document.createElement("a");
-                linkB.download = `KARTA_${currentModalRecordId}_BELAKANG.png`;
-                linkB.href = canvasBack.toDataURL("image/png");
-                linkB.click();
-                showToast("File PNG Depan & Belakang berhasil diunduh!");
-            }, 400);
+            const t = exportTargets(); if (!t.f || !t.b) return;
+            showToast("Menyiapkan PNG resolusi tinggi...");
+            try {
+                await exportPrep();
+                const cf = await snapCard(t.f), cb = await snapCard(t.b);
+                dlCanvas(cf, `KARTA_${t.id}_DEPAN.png`);
+                setTimeout(() => { dlCanvas(cb, `KARTA_${t.id}_BELAKANG.png`); showToast("PNG depan & belakang berhasil diunduh!"); }, 400);
+            } catch (e) { showToast("Gagal membuat PNG. Coba lagi."); }
         }
-
         async function exportCardAsPDF() {
-            const frontEl = document.getElementById("modal-card-front");
-            const backEl = document.getElementById("modal-card-back");
-            if (!frontEl || !backEl) return;
-
-            showToast("Membuat file PDF sesuai ukuran kartu...");
-            const { jsPDF } = window.jspdf;
-            const { w: cw, h: ch } = cardDims();
-            const ori = cw >= ch ? "landscape" : "portrait", pg = [Math.min(cw, ch), Math.max(cw, ch)];
-            const pdf = new jsPDF({ orientation: ori, unit: "mm", format: pg });
-
-            const canvasFront = await html2canvas(frontEl, { scale: 3, useCORS: true });
-            const canvasBack = await html2canvas(backEl, { scale: 3, useCORS: true });
-
-            pdf.addImage(canvasFront.toDataURL("image/png"), "PNG", 0, 0, cw, ch);
-            pdf.addPage(pg, ori);
-            pdf.addImage(canvasBack.toDataURL("image/png"), "PNG", 0, 0, cw, ch);
-
-            pdf.save(`KARTA_${currentModalRecordId}.pdf`);
-            showToast(`File KARTA_${currentModalRecordId}.pdf berhasil diunduh!`);
+            const t = exportTargets(); if (!t.f || !t.b) return;
+            showToast("Membuat PDF sesuai ukuran kartu...");
+            try {
+                await exportPrep();
+                const { jsPDF } = window.jspdf, { w: cw, h: ch } = cardDims();
+                const ori = cw >= ch ? "landscape" : "portrait", pg = [Math.min(cw, ch), Math.max(cw, ch)];
+                const pdf = new jsPDF({ orientation: ori, unit: "mm", format: pg });
+                const cf = await snapCard(t.f), cb = await snapCard(t.b);
+                pdf.addImage(cf.toDataURL("image/png"), "PNG", 0, 0, cw, ch);
+                pdf.addPage(pg, ori);
+                pdf.addImage(cb.toDataURL("image/png"), "PNG", 0, 0, cw, ch);
+                pdf.save(`KARTA_${t.id}.pdf`);
+                showToast(`File KARTA_${t.id}.pdf berhasil diunduh!`);
+            } catch (e) { showToast("Gagal membuat PDF. Coba lagi."); }
         }
 
-        function deleteRecord(id) {
-            if (confirm(`Apakah Anda yakin ingin menghapus data KARTA ${id}?`)) {
-                kartaRecords = kartaRecords.filter(r => r.id !== id);
-                saveRecordsToStorage();
-                renderDatabaseTable();
-                showToast(`Data kartu ${id} telah dihapus.`);
-            }
-        }
-
-// ================= BACKGROUND & LOGO: PUSTAKA, AUTO-FIT, MANUAL =================
-        const IMG_TARGETS = {
-            bgFront:      { n: "Background Depan",    imgId: "img-bg-front",      svgId: "svg-bg-front" },
-            bgBack:       { n: "Background Belakang", imgId: "img-bg-back",       svgId: "svg-bg-back" },
-            logoDesa:     { n: "Logo Desa",           imgId: "img-logo-desa",     svgId: "svg-logo-desa" },
-            logoPosyandu: { n: "Logo Posyandu",       imgId: "img-logo-posyandu", svgId: "svg-logo-posyandu" }
-        };
-        const EL_TO_IMG = { "el-f-logodesa": "logoDesa", "el-f-logopos": "logoPosyandu" };
-        const BUILTIN_BG = {
-            v1: { n: "Desain 1 · Vektor bawaan" },
-            p1: { n: "Desain 2A · Batik penuh (BG_KARTU)", url: BG_P1 },
-            p2: { n: "Desain 2B · Batik sudut (BG_KARTU_2)", url: BG_P2 }
-        };
-        const mkImg = (src, fit) => ({ src, fit, zoom: 100, ox: 0, oy: 0, manual: false });
-        let imgCfg = { bgFront: mkImg("v1", "fill"), bgBack: mkImg("v1", "fill"), logoDesa: mkImg("", "contain"), logoPosyandu: mkImg("", "contain") };
-        let bgGallery = [];
-        let activeImgTarget = "bgFront";
-        const escHtml = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
-        function bgUrl(src) {
-            if (BUILTIN_BG[src]) return BUILTIN_BG[src].url || "";
-            const g = bgGallery.find(x => "c:" + x.id === src);
-            return g ? g.url : "";
-        }
-        function loadImgCfg() {
-            let saved = null;
-            try { saved = JSON.parse(localStorage.getItem("karta_img_cfg_v1") || "null"); } catch (e) {}
-            try { bgGallery = JSON.parse(localStorage.getItem("karta_bg_gallery_v1") || "[]"); } catch (e) { bgGallery = []; }
-            if (saved) Object.keys(imgCfg).forEach(k => { if (saved[k]) Object.assign(imgCfg[k], saved[k]); });
-            else ["bgFront", "bgBack"].forEach(k => {   // migrasi unggahan versi lama
-                const old = localStorage.getItem("karta_asset_" + k);
-                if (old) { bgGallery.push({ id: "old" + k, name: "Unggahan sebelumnya", url: old }); imgCfg[k] = mkImg("c:old" + k, "cover"); localStorage.removeItem("karta_asset_" + k); }
-            });
-            if (!bgUrl(imgCfg.bgFront.src) && imgCfg.bgFront.src !== "v1") imgCfg.bgFront.src = "v1";
-            if (!bgUrl(imgCfg.bgBack.src) && imgCfg.bgBack.src !== "v1") imgCfg.bgBack.src = "v1";
-            renderBgSelects();
-            Object.keys(IMG_TARGETS).forEach(applyImg);
-        }
-        function initImgUI() {
-            document.getElementById("img-chips").innerHTML = Object.entries(IMG_TARGETS).map(([k, t]) =>
-                `<button type="button" data-chip="${k}" onclick="selectImgTarget('${k}')">${t.n}</button>`).join("");
-            [["card-front", "bgFront"], ["card-back", "bgBack"]].forEach(([id, k]) =>
-                document.getElementById(id).addEventListener("pointerdown", () => {
-                    if (activeStudioMode === "layout") { clearSelectedHighlight(); selectImgTarget(k); showToast("Dipilih: " + IMG_TARGETS[k].n); }
-                }));
-            const art = document.getElementById("login-art"); if (art) { art.src = BG_P1; art.classList.remove("hidden"); art.classList.add("lg:block"); }
-            selectImgTarget("bgFront");
-        }
-        function persistImg() {
-            try { localStorage.setItem("karta_img_cfg_v1", JSON.stringify(imgCfg)); document.getElementById("autosave-note").textContent = "✓ Tersimpan otomatis sebagai default (" + new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + ")"; }
-            catch (e) { showToast("Penyimpanan browser penuh. Pengaturan hanya berlaku sementara."); }
-        }
-        function persistGallery() {
-            try { localStorage.setItem("karta_bg_gallery_v1", JSON.stringify(bgGallery)); return true; }
-            catch (e) { showToast("Penyimpanan browser penuh. Hapus gambar lama dengan tombol Reset."); return false; }
-        }
-        function applyImg(key) {
-            const t = IMG_TARGETS[key], c = imgCfg[key], img = document.getElementById(t.imgId), svg = document.getElementById(t.svgId);
-            const url = key.startsWith("bg") ? bgUrl(c.src) : (localStorage.getItem("karta_asset_" + key) || "");
-            if (url) { img.src = url; img.classList.remove("hidden"); svg.classList.add("hidden"); }
-            else { img.removeAttribute("src"); img.classList.add("hidden"); svg.classList.remove("hidden"); }
-            img.style.objectFit = c.fit;
-            img.style.objectPosition = `${50 + c.ox}% ${50 + c.oy}%`;
-            img.style.transform = c.zoom !== 100 ? `scale(${c.zoom / 100})` : "";
-        }
-        // Ukuran otomatis: logo = utuh; background = pas penuh bila rasio mirip kartu, selain itu potong tengah
-        function autoFitImg(key) {
-            const c = imgCfg[key]; Object.assign(c, { zoom: 100, ox: 0, oy: 0, manual: false });
-            const done = () => { applyImg(key); if (key === activeImgTarget) syncImgControls(); persistImg(); };
-            if (key.startsWith("logo")) { c.fit = "contain"; return done(); }
-            const url = bgUrl(c.src); if (!url) return done();
-            const im = new Image();
-            im.onload = () => { const d = cardDims(); const r = (im.naturalWidth / im.naturalHeight) / (d.w / d.h); c.fit = Math.abs(r - 1) < 0.08 ? "fill" : "cover"; done(); };
-            im.onerror = done; im.src = url;
-        }
-        function setImgProp(prop, val) {
-            const c = imgCfg[activeImgTarget]; c[prop] = prop === "fit" ? val : parseFloat(val); c.manual = true;
-            applyImg(activeImgTarget); syncImgControls(); persistImg();
-        }
-        function selectImgTarget(key) { activeImgTarget = key; syncImgControls(); }
-        function syncImgControls() {
-            const k = activeImgTarget, c = imgCfg[k], isBg = k.startsWith("bg");
-            document.querySelectorAll("[data-chip]").forEach(b => b.className = "px-2.5 py-1 rounded-lg border text-[11px] font-bold " + (b.dataset.chip === k ? "bg-amber-500 border-amber-600 text-slate-950" : "bg-white border-amber-200 text-slate-700"));
-            document.getElementById("img-fit").value = c.fit;
-            [["zoom", c.zoom + "%"], ["ox", c.ox], ["oy", c.oy]].forEach(([p, lbl]) => { document.getElementById("img-" + p).value = c[p]; document.getElementById("img-" + p + "-lbl").textContent = lbl; });
-            const vector = isBg ? c.src === "v1" : !localStorage.getItem("karta_asset_" + k);
-            document.getElementById("img-note").textContent = vector
-                ? (isBg ? "Desain 1 (vektor) otomatis mengikuti ukuran kartu. Pilih gambar background untuk mengatur pas/zoom/posisi." : "Logo bawaan (vektor). Unggah logo untuk mengatur ukuran & posisinya.")
-                : "Atur manual dengan slider, atau klik Sesuaikan Otomatis.";
-            document.getElementById("card-front").classList.toggle("bg-sel", k === "bgFront");
-            document.getElementById("card-back").classList.toggle("bg-sel", k === "bgBack");
-        }
-        function renderBgSelects() {
-            const opts = Object.entries(BUILTIN_BG).map(([v, o]) => [v, o.n]).concat(bgGallery.map(g => ["c:" + g.id, "Unggahan · " + g.name]));
-            ["bgFront", "bgBack"].forEach(k => {
-                document.getElementById("bg-sel-" + k).innerHTML = opts.map(([v, n]) => `<option value="${escHtml(v)}" ${imgCfg[k].src === v ? "selected" : ""}>${escHtml(n)}</option>`).join("");
-                const u = bgUrl(imgCfg[k].src);
-                document.getElementById("bg-thumb-" + k).style.backgroundImage = u ? `url(${u})` : "linear-gradient(135deg,#0d3b54,#177882)";
-            });
-        }
-        function setBgSource(key, src) { imgCfg[key].src = src; renderBgSelects(); autoFitImg(key); applyImg(key); }
-        function applyDesignPreset(p) {
-            const m = { d1: ["v1", "v1"], d2: ["p1", "p2"], d2s: ["p2", "p1"] }[p];
-            imgCfg.bgFront.src = m[0]; imgCfg.bgBack.src = m[1];
-            renderBgSelects(); autoFitImg("bgFront"); autoFitImg("bgBack");
-            showToast("Desain diterapkan & disimpan sebagai default.");
-        }
-        function shrinkImage(file, max, keepAlpha) {
-            return new Promise((res, rej) => {
-                const fr = new FileReader(); fr.onerror = rej;
-                fr.onload = () => {
-                    const im = new Image(); im.onerror = rej;
-                    im.onload = () => {
-                        const w0 = im.width || 512, h0 = im.height || 512, k = Math.min(1, max / Math.max(w0, h0));
-                        const cv = document.createElement("canvas"); cv.width = Math.round(w0 * k); cv.height = Math.round(h0 * k);
-                        cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
-                        res(keepAlpha ? cv.toDataURL("image/png") : cv.toDataURL("image/jpeg", 0.88));
-                    };
-                    im.src = fr.result;
-                };
-                fr.readAsDataURL(file);
-            });
-        }
-        function handleAssetUpload(event, key) {
-            const file = event.target.files[0]; if (!file) return;
-            const isLogo = key.startsWith("logo");
-            shrinkImage(file, isLogo ? 600 : 1600, isLogo).then(url => {
-                if (isLogo) {
-                    try { localStorage.setItem("karta_asset_" + key, url); } catch (e) { showToast("Penyimpanan browser penuh."); }
-                } else {
-                    const id = "u" + Date.now().toString(36);
-                    bgGallery.push({ id, name: file.name.replace(/\.[^.]+$/, "").slice(0, 22), url });
-                    if (!persistGallery()) { bgGallery.pop(); return; }
-                    imgCfg[key].src = "c:" + id; renderBgSelects();
-                }
-                autoFitImg(key); applyImg(key); selectImgTarget(key);
-                showToast("Gambar diterapkan: ukuran disesuaikan otomatis.");
-            }).catch(() => showToast("File gambar tidak dapat dibaca."));
-            event.target.value = "";
-        }
-        function resetCustomAssets() {
-            if (!confirm("Kembalikan background & logo ke desain bawaan (Desain 1)? Gambar unggahan akan dihapus.")) return;
-            ["karta_img_cfg_v1", "karta_bg_gallery_v1", "karta_asset_logoDesa", "karta_asset_logoPosyandu", "karta_asset_bgFront", "karta_asset_bgBack"].forEach(k => localStorage.removeItem(k));
-            location.reload();
-        }
-
-        // ================= LOGIN (Admin & Kader) =================
+// ================= LOGIN (Admin & Kader) =================
         // CATATAN INTEGRASI: ganti/hapus AKUN_BAWAAN setelah data akun Admin & Kader tersambung.
         // Akun juga dibaca dari localStorage (satu origin gopositif.github.io dengan Web Admin/Kader):
         // array/objek berisi {id|username, password|pin, nama, role}. Sesuaikan nama key di AKUN_SUMBER.
@@ -2047,23 +1663,7 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             document.getElementById("login-id").focus();
         }
         function loginMsg(t) { const m = document.getElementById("login-msg"); m.textContent = t; m.classList.toggle("hidden", !t); }
-        function handleLogin(e) {
-            e.preventDefault();
-            if (document.getElementById("hp-check-login").value) return;
-            const now = Date.now();
-            if (loginLockUntil > now) return loginMsg(`Terlalu banyak percobaan. Coba lagi dalam ${Math.ceil((loginLockUntil - now) / 1000)} detik.`);
-            const id = document.getElementById("login-id").value.trim().toLowerCase(), pw = document.getElementById("login-pw").value;
-            const acc = ambilAkun().find(a => String(a.id).trim().toLowerCase() === id && String(a.password) === pw);
-            if (!acc) {
-                if (++loginFails >= 5) { loginFails = 0; loginLockUntil = now + 30000; }
-                return loginMsg("ID atau kata sandi tidak sesuai.");
-            }
-            loginFails = 0; loginMsg("");
-            const user = { id: acc.id, nama: acc.nama || acc.id, role: acc.role || "Kader" };
-            try { sessionStorage.setItem("karta_session", JSON.stringify(user)); } catch (err) {}
-            document.getElementById("login-pw").value = "";
-            startSession(user);
-        }
+
         function startSession(u) {
             document.getElementById("login-screen").classList.add("hidden");
             document.getElementById("app-shell").classList.remove("hidden");
@@ -2093,5 +1693,624 @@ const BG_P2="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQE
             }, 3000);
         }
     </script>
+<script>
+/* ===== KARTA v2: keamanan input, desain default (GitHub), tata letak X/Y, editor teks, login ===== */
+const $ = id => document.getElementById(id);
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } };
+const ESC_MAP = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ESC_MAP[c]);
+const cleanTxt = (s, max = 80) => String(s == null ? "" : s).normalize("NFKC").replace(/[\u0000-\u001f\u007f<>`\\{}]/g, "").replace(/\s+/g, " ").trim().slice(0, max);
+const cleanBlock = (s, max = 300) => String(s == null ? "" : s).normalize("NFKC").replace(/[\u0000-\u0009\u000b-\u001f\u007f<>`\\{}]/g, "").slice(0, max);
+const cleanId = s => cleanTxt(s, 20).toUpperCase().replace(/[^A-Z0-9-]/g, "");
+const cleanPin = s => String(s == null ? "" : s).replace(/[^A-Za-z0-9]/g, "").slice(0, 12);
+const num = (v, a, b, d) => { v = parseFloat(v); return isFinite(v) ? Math.min(b, Math.max(a, v)) : d; };
+const targetsOf = el => [...el.querySelectorAll(".editable-target")];
+
+/* Hanya tautan Google Drive/Google Images atau data gambar yang diterima */
+function safeImgUrl(u) {
+    u = String(u || "").trim();
+    const m = u.match(/drive\.google\.com\/.*?(?:\/d\/|[?&]id=)([\w-]{20,})/);
+    if (m) return "https://lh3.googleusercontent.com/d/" + m[1];
+    if (/^https:\/\/[\w-]+\.googleusercontent\.com\/[\w\-./=]+$/.test(u)) return u;
+    if (/^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(u)) return u;
+    return "";
+}
+
+/* ---------- Teks aman (tanpa innerHTML dari input) ---------- */
+function setSafeText(node, val) {
+    node.textContent = "";
+    String(val).split("\n").forEach((line, i) => {
+        if (i) node.appendChild(document.createElement("br"));
+        line.split("**").forEach((p, j) => {
+            if (!p) return;
+            if (j % 2) { const b = document.createElement("strong"); b.textContent = p; node.appendChild(b); }
+            else node.appendChild(document.createTextNode(p));
+        });
+    });
+}
+function nodeToMd(n) {
+    let o = "";
+    n.childNodes.forEach(c => {
+        if (c.nodeType === 3) o += c.textContent.replace(/\s+/g, " ");
+        else if (c.nodeName === "BR") o += "\n";
+        else if (/^(STRONG|B)$/.test(c.nodeName)) o += "**" + c.textContent + "**";
+        else o += c.textContent;
+    });
+    return o.replace(/ *\n */g, "\n").trim();
+}
+let textsCfg = {}, ORIGH = {};
+function captureOrig() { document.querySelectorAll(".draggable-el").forEach(el => { ORIGH[el.id] = targetsOf(el).map(t => t.innerHTML); }); }
+const persistTexts = () => lsSet("karta_texts_v2", JSON.stringify(textsCfg));
+
+function buildTextFields(el) {
+    const box = $("text-fields"); box.textContent = "";
+    const ts = targetsOf(el);
+    if (!ts.length) { const p = document.createElement("p"); p.className = "text-xs text-slate-500"; p.textContent = "Bagian ini terisi otomatis dari Form Identitas dan tidak dapat diubah di sini."; box.appendChild(p); return; }
+    ts.forEach((t, i) => {
+        const w = document.createElement("label"); w.className = "block text-[11px] font-bold text-slate-600";
+        w.append(t.dataset.f || "Teks " + (i + 1));
+        const ta = document.createElement("textarea"); ta.maxLength = 300; ta.value = nodeToMd(t);
+        ta.rows = Math.min(4, ta.value.split("\n").length + (ta.value.length > 60 ? 1 : 0));
+        ta.className = "mt-1 w-full px-3 py-2 text-xs font-medium rounded-xl border border-sky-300 bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none";
+        ta.oninput = () => updateSelectedText(i, ta.value);
+        w.appendChild(ta); box.appendChild(w);
+    });
+}
+function updateSelectedText(i, val) {
+    if (!selectedElId) return;
+    const t = targetsOf($(selectedElId))[i]; if (!t) return;
+    val = cleanBlock(val);
+    (textsCfg[selectedElId] = textsCfg[selectedElId] || {})[i] = val;
+    setSafeText(t, val); persistTexts();
+}
+function resetTexts(all) {
+    const ids = all ? Object.keys(DEFAULT_LAYOUT) : [selectedElId];
+    if (!ids[0]) return showToast("Klik bagian tulisan pada kartu dulu.");
+    const base = (curDesign() || { data: {} }).data.texts || {};
+    ids.forEach(id => { if (base[id]) textsCfg[id] = JSON.parse(JSON.stringify(base[id])); else delete textsCfg[id]; });
+    persistTexts(); applyLayout();
+    if (selectedElId) buildTextFields($(selectedElId));
+    showToast(all ? "Semua tulisan dikembalikan ke default." : "Tulisan bagian ini dikembalikan ke default.");
+}
+
+/* ---------- Tata letak: pilih elemen, posisi X/Y ---------- */
+function selectElementForEdit(elId) {
+    clearSelectedHighlight(); selectedElId = elId;
+    const el = $(elId); if (!el) return;
+    el.classList.add("selected-el");
+    const label = el.dataset.label || elId;
+    $("sel-layout-name").textContent = label; $("sel-text-name").textContent = label;
+    if (EL_TO_IMG[elId]) selectImgTarget(EL_TO_IMG[elId]);
+    const cfg = layoutConfig[elId] || { scale: 1 }, sc = Math.round((cfg.scale || 1) * 100);
+    $("ctrl-scale").value = sc; $("ctrl-scale-label").textContent = sc + "%";
+    $("ctrl-font-family").value = cfg.fontFamily || "'Plus Jakarta Sans', sans-serif";
+    if (/^#[0-9a-f]{6}$/i.test(cfg.color || "")) $("ctrl-color").value = cfg.color;
+    syncPosControls();
+    if (activeStudioMode === "text") buildTextFields(el);
+}
+function syncPosControls() {
+    const el = selectedElId && $(selectedElId); if (!el) return;
+    [["x", "left"], ["y", "top"]].forEach(([a, p]) => { const v = parseFloat(el.style[p]) || 0; $("pos-" + a).value = v; $("pos-" + a + "-lbl").textContent = v.toFixed(1) + "%"; });
+}
+function setPos(el, l, t) {
+    l = Math.max(-10, Math.min(100, l)); t = Math.max(-10, Math.min(100, t));
+    el.style.left = l.toFixed(2) + "%"; el.style.top = t.toFixed(2) + "%";
+    const c = layoutConfig[el.id] || (layoutConfig[el.id] = { scale: 1 });
+    c.left = +l.toFixed(2); c.top = +t.toFixed(2); syncPosControls();
+}
+function nudgeElement(dx, dy) {
+    if (!selectedElId) return showToast("Klik salah satu elemen di kartu dulu.");
+    const el = $(selectedElId), k = parseFloat($("nudge-step").value) || 1;
+    setPos(el, (parseFloat(el.style.left) || 0) + Math.sign(dx) * k, (parseFloat(el.style.top) || 0) + Math.sign(dy) * k);
+    saveLayoutToStorage();
+}
+function setElPos(axis, v) {
+    if (!selectedElId) return showToast("Klik salah satu elemen di kartu dulu.");
+    const el = $(selectedElId); v = parseFloat(v) || 0;
+    setPos(el, axis === "left" ? v : parseFloat(el.style.left) || 0, axis === "top" ? v : parseFloat(el.style.top) || 0);
+    saveLayoutToStorage();
+}
+function applyLayout() {
+    const portrait = orientKey() === "p"; let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(layoutKey()) || "{}"); } catch (e) {}
+    layoutConfig = {};
+    Object.keys(DEFAULT_LAYOUT).forEach(id => {
+        const cfg = layoutConfig[id] = Object.assign({}, DEFAULT_LAYOUT[id], portrait ? PORTRAIT_LAYOUT[id] : {}, saved[id] || {});
+        const el = $(id); if (!el) return;
+        el.style.top = cfg.top + "%"; el.style.left = cfg.left + "%"; el.style.width = cfg.width + "%";
+        el.style.transform = (cfg.scale && cfg.scale !== 1) ? `scale(${cfg.scale})` : ""; el.style.transformOrigin = "top center";
+        el.style.fontFamily = cfg.fontFamily || ""; el.style.color = cfg.color || "";
+        el.querySelectorAll("*").forEach(c => c.style.color = cfg.color || "");
+        targetsOf(el).forEach((t, i) => { const v = (textsCfg[id] || {})[i]; if (v != null) setSafeText(t, v); else if (ORIGH[id]) t.innerHTML = ORIGH[id][i]; });
+    });
+    updateLivePreview();
+}
+function resetAllLayout() {
+    const d = curDesign(), o = orientKey();
+    lsSet(layoutKey(), JSON.stringify((d && d.data.layout[o]) || {}));
+    applyLayout(); clearSelectedHighlight(); showToast("Posisi dikembalikan ke default desain.");
+}
+
+/* ---------- Background & logo ---------- */
+const IMG_TARGETS = {
+    bgFront: { n: "Background Depan", imgId: "img-bg-front", svgId: "svg-bg-front" },
+    bgBack: { n: "Background Belakang", imgId: "img-bg-back", svgId: "svg-bg-back" },
+    logoDesa: { n: "Logo Desa", imgId: "img-logo-desa", svgId: "svg-logo-desa" },
+    logoPosyandu: { n: "Logo Posyandu", imgId: "img-logo-posyandu", svgId: "svg-logo-posyandu" }
+};
+const EL_TO_IMG = { "el-f-logodesa": "logoDesa", "el-f-logopos": "logoPosyandu" };
+const LH3 = id => "https://lh3.googleusercontent.com/d/" + id;
+const ASSET = { logoDesa: LH3("1PHQXBAoveuWzhrT1ncGv13JGE8eARIQh"), logoPosyandu: LH3("1J7FQs9yYIe-JH6kNX4S5-7UwPooUw-uj"), p1: LH3("1PuFOO6J2T70r-dTHbXBSd7XrnHH0m9FA"), p2: LH3("1AXAdcgpxxw3rC9mu04XyXRKA90rKzplV") };
+/* url = tautan Drive (utama); fb = salinan tertanam bila tautan gagal dimuat */
+const BUILTIN_BG = { v1: { n: "Vektor bawaan" }, p1: { n: "Batik 2A · penuh", url: ASSET.p1, fb: BG_P1 }, p2: { n: "Batik 2B · sudut", url: ASSET.p2, fb: BG_P2 } };
+const mkImg = (src, fit) => ({ src, fit, zoom: 100, ox: 0, oy: 0, manual: false, rot: "auto", trim: "auto" });
+const freshImg = () => ({ bgFront: mkImg("v1", "fill"), bgBack: mkImg("v1", "fill"), logoDesa: mkImg(ASSET.logoDesa, "contain"), logoPosyandu: mkImg(ASSET.logoPosyandu, "contain") });
+let imgCfg = freshImg(), bgGallery = [], activeImgTarget = "bgFront";
+
+function bgUrl(src) {
+    if (BUILTIN_BG[src]) return BUILTIN_BG[src].url || "";
+    const g = bgGallery.find(x => "c:" + x.id === src);
+    return g ? g.url : safeImgUrl(src);
+}
+function normImg(o, key) {
+    const base = freshImg()[key], isBg = key.startsWith("bg");
+    if (typeof o === "string") o = { src: o };
+    o = o || {};
+    let src = o.src === undefined ? base.src : String(o.src);
+    if (isBg) { if (!(BUILTIN_BG[src] || src.startsWith("c:"))) src = safeImgUrl(src) || "v1"; }
+    else src = src ? safeImgUrl(src) : "";
+    return { src, fit: ["cover", "contain", "fill"].includes(o.fit) ? o.fit : base.fit, zoom: num(o.zoom, 30, 400, 100), ox: num(o.ox, -100, 100, 0), oy: num(o.oy, -100, 100, 0), manual: !!o.manual, rot: ["auto", "0", "90"].includes(String(o.rot)) ? String(o.rot) : "auto", trim: o.trim === "0" ? "0" : "auto" };
+}
+function loadImgCfg() {
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem("karta_img_cfg_v2") || "null"); } catch (e) {}
+    try { bgGallery = JSON.parse(localStorage.getItem("karta_bg_gallery_v1") || "[]").filter(g => g && /^[\w-]+$/.test(g.id) && safeImgUrl(g.url)).slice(0, 12); } catch (e) { bgGallery = []; }
+    imgCfg = freshImg();
+    if (s) Object.keys(imgCfg).forEach(k => { if (s[k]) Object.assign(imgCfg[k], normImg(s[k], k)); });
+    ["bgFront", "bgBack"].forEach(k => { if (imgCfg[k].src !== "v1" && !bgUrl(imgCfg[k].src)) imgCfg[k].src = "v1"; });
+    renderBgSelects(); Object.keys(IMG_TARGETS).forEach(applyImg);
+}
+function initImgUI() {
+    $("img-chips").innerHTML = Object.entries(IMG_TARGETS).map(([k, t]) => `<button type="button" data-chip="${k}" onclick="selectImgTarget('${k}')">${t.n}</button>`).join("");
+    [["card-front", "bgFront"], ["card-back", "bgBack"]].forEach(([id, k]) => $(id).addEventListener("pointerdown", () => {
+        if (activeStudioMode === "layout") { clearSelectedHighlight(); selectImgTarget(k); showToast("Dipilih: " + IMG_TARGETS[k].n); }
+    }));
+    selectImgTarget("bgFront");
+}
+function persistImg() {
+    if (lsSet("karta_img_cfg_v2", JSON.stringify(imgCfg))) $("autosave-note").textContent = "✓ Draf tersimpan di perangkat ini (" + new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + ")";
+    else showToast("Penyimpanan browser penuh. Pengaturan hanya berlaku sementara.");
+}
+function applyImg(key) {
+    if (key.startsWith("bg")) return applyBg(key);
+    const t = IMG_TARGETS[key], c = imgCfg[key], img = $(t.imgId), svg = $(t.svgId), isBg = key.startsWith("bg");
+    const url = isBg ? bgUrl(c.src) : safeImgUrl(c.src), fb = isBg && BUILTIN_BG[c.src] && BUILTIN_BG[c.src].fb;
+    img.onerror = () => {
+        if (img.crossOrigin) { img.removeAttribute("crossorigin"); img.src = url; }
+        else if (fb && img.getAttribute("src") !== fb) img.src = fb;
+        else { img.classList.add("hidden"); svg.classList.remove("hidden"); }
+    };
+    if (url) { img.crossOrigin = "anonymous"; img.src = url; img.classList.remove("hidden"); svg.classList.add("hidden"); }
+    else { img.removeAttribute("src"); img.classList.add("hidden"); svg.classList.remove("hidden"); }
+    img.style.objectFit = c.fit; img.style.objectPosition = "50% 50%"; img.style.transformOrigin = "center";
+    /* Geser X/Y memakai translate (persen) agar bekerja di semua mode pas */
+    img.style.transform = (c.zoom !== 100 || c.ox || c.oy) ? `translate(${c.ox}%, ${c.oy}%) scale(${c.zoom / 100})` : "";
+}
+function autoFitImg(key) {
+    const c = imgCfg[key]; Object.assign(c, { zoom: 100, ox: 0, oy: 0, manual: false, rot: "auto", trim: "auto" });
+    if (key.startsWith("logo")) c.fit = "contain";
+    applyImg(key); if (key === activeImgTarget) syncImgControls(); persistImg();
+}
+function setImgProp(prop, val) {
+    const c = imgCfg[activeImgTarget];
+    if (prop === "rot") c.rot = ["auto", "0", "90"].includes(val) ? val : "auto"; else if (prop === "trim") c.trim = val === "0" ? "0" : "auto"; else c[prop] = parseFloat(val) || 0;
+    c.manual = true;
+    if (activeImgTarget.startsWith("bg")) rebake(activeImgTarget); else applyImg(activeImgTarget);
+    syncImgControls(); persistImg();
+}
+/* Background digambar ulang ke kanvas berukuran PERSIS kartu (cover + putar otomatis bila orientasi berbeda),
+   sehingga pratinjau, print, PNG, dan PDF identik di semua ukuran & orientasi. */
+const _imc = {}, _bk = {}, _rq = {}, _pc = new WeakMap();
+/* Gambar desain sering berupa panel kartu di atas margin polos (kertas/putih) + bayangan.
+   Deteksi kotak panel supaya yang dipakai hanya panelnya; kartu pun terisi penuh dan tata letak pas. */
+function findPanel(im) {
+    if (_pc.has(im)) return _pc.get(im);
+    let r = null;
+    try {
+        const iw = im.naturalWidth, ih = im.naturalHeight, k = Math.min(1, 240 / Math.max(iw, ih)), w = Math.max(8, Math.round(iw * k)), h = Math.max(8, Math.round(ih * k));
+        const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+        const x = cv.getContext("2d", { willReadFrequently: true }); x.drawImage(im, 0, 0, w, h);
+        const d = x.getImageData(0, 0, w, h).data, m = Math.max(2, Math.round(Math.min(w, h) * 0.02)), ring = [];
+        for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) if (i < m || j < m || i >= w - m || j >= h - m) ring.push((j * w + i) * 4);
+        const med = c => { const a = ring.map(p => d[p + c]).sort((p, q) => p - q); return a[a.length >> 1]; };
+        const mr = med(0), mg = med(1), mb = med(2), df = p => (Math.abs(d[p] - mr) + Math.abs(d[p + 1] - mg) + Math.abs(d[p + 2] - mb)) / 3;
+        let dev = 0; ring.forEach(p => dev += df(p)); dev /= ring.length;
+        if (dev < 26) {   // hanya bila margin tepi cukup seragam (kertas/polos, boleh sedikit bervignet)
+            const rc = new Array(h).fill(0), cc = new Array(w).fill(0), mk = new Uint8Array(w * h);
+            for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) if (df((j * w + i) * 4) > 70) { rc[j]++; cc[i]++; mk[j * w + i] = 1; }
+            const first = (a, t) => a.findIndex(v => v > t), last = (a, t) => { for (let i = a.length - 1; i >= 0; i--) if (a[i] > t) return i; return -1; };
+            const T = first(rc, w * .03), B = last(rc, w * .03), Lf = first(cc, h * .03), Rg = last(cc, h * .03);   // kotak batas longgar
+            if (T >= 0 && B > T && Lf >= 0 && Rg > Lf) {
+                const bw = (Rg - Lf + 1) / w, bh = (B - T + 1) / h;
+                let fill = 0; for (let j = T; j <= B; j++) for (let i = Lf; i <= Rg; i++) fill += mk[j * w + i];   // panel harus padat, bukan sekadar objek di latar polos
+                if (bw > .3 && bh > .3 && (bw < .94 || bh < .94) && fill / ((B - T + 1) * (Rg - Lf + 1)) >= .85) {
+                    const ix = (Rg - Lf + 1) * .015, iy = (B - T + 1) * .015;   // masuk sedikit: sembunyikan sudut membulat & bayangan
+                    r = { x: (Lf + ix) / k, y: (T + iy) / k, w: (Rg - Lf + 1 - 2 * ix) / k, h: (B - T + 1 - 2 * iy) / k };
+                }
+            }
+        }
+    } catch (e) {}
+    _pc.set(im, r); return r;
+}
+function loadIm(u, cors) { const k = (cors ? "c|" : "n|") + u; return _imc[k] || (_imc[k] = new Promise(r => { const i = new Image(); if (cors) i.crossOrigin = "anonymous"; i.onload = () => r(i); i.onerror = () => r(null); i.src = u; })); }
+function rebake(k) { cancelAnimationFrame(_rq[k]); _rq[k] = requestAnimationFrame(() => applyBg(k)); }
+async function applyBg(key) {
+    const t = IMG_TARGETS[key], c = imgCfg[key], img = $(t.imgId), svg = $(t.svgId), n = _bk[key] = (_bk[key] || 0) + 1;
+    const u = bgUrl(c.src), fb = BUILTIN_BG[c.src] && BUILTIN_BG[c.src].fb;
+    const vector = () => { img.classList.add("hidden"); img.removeAttribute("src"); svg.classList.remove("hidden"); };
+    if (c.src === "v1" || (!u && !fb)) return vector();
+    let im = u ? await loadIm(u, true) : null, usedFb = false;
+    if (!im && fb) { im = await loadIm(fb, false); usedFb = true; }
+    if (im && !usedFb && fb && c.trim !== "0" && !findPanel(im)) { const f = await loadIm(fb, false); if (f) { im = f; usedFb = true; } }   // pengaman: salinan tertanam sudah terpangkas pas
+    if (n !== _bk[key]) return;
+    if (!im) return vector();
+    const bake = im => {
+        const d = cardDims(), R = d.w / d.h, iw = im.naturalWidth, ih = im.naturalHeight, L = 1600;
+        const cr = c.trim === "0" ? null : findPanel(im), sx = cr ? cr.x : 0, sy = cr ? cr.y : 0, sw = cr ? cr.w : iw, sh = cr ? cr.h : ih;
+        const cw = d.w >= d.h ? L : Math.round(L * d.w / d.h), ch = d.w >= d.h ? Math.round(L * d.h / d.w) : L;
+        const rot = c.rot === "90" || (c.rot !== "0" && Math.abs(Math.log((sh / sw) / R)) + 0.1 < Math.abs(Math.log((sw / sh) / R)));
+        const s = Math.max(cw / (rot ? sh : sw), ch / (rot ? sw : sh)) * (c.zoom / 100);
+        const cv = document.createElement("canvas"); cv.width = cw; cv.height = ch;
+        const x = cv.getContext("2d"); x.fillStyle = "#0e4157"; x.fillRect(0, 0, cw, ch);
+        x.translate(cw / 2 + c.ox / 200 * cw, ch / 2 + c.oy / 200 * ch); if (rot) x.rotate(Math.PI / 2); x.scale(s, s); x.drawImage(im, sx, sy, sw, sh, -sw / 2, -sh / 2, sw, sh);
+        return cv.toDataURL("image/jpeg", 0.9);
+    };
+    let data = null;
+    try { data = bake(im); } catch (e) {
+        if (!usedFb && fb) { const f = await loadIm(fb, false); if (f) try { data = bake(f); } catch (e2) {} }
+    }
+    if (n !== _bk[key]) return;
+    img.style.transform = ""; img.style.objectPosition = "50% 50%";
+    if (data) { img.style.objectFit = "fill"; img.src = data; }
+    else { img.style.objectFit = "cover"; img.src = u || fb; }   // cadangan: tanpa putar/zoom bila gambar tidak bisa diproses
+    img.classList.remove("hidden"); svg.classList.add("hidden");
+}
+
+/* ---------- Tombol Edit desain & kelola Wilayah Posyandu ---------- */
+function toggleDesignTools() {
+    const t = $("design-tools"), b = $("btn-design-edit"), on = t.classList.contains("hidden");
+    t.classList.toggle("hidden", !on); b.setAttribute("aria-expanded", on); b.lastElementChild.textContent = on ? "Selesai" : "Edit";
+}
+const POS_KEY = "karta_posyandu_v1", POS_DEF = ["POSYANDU DESA GONOHARJO", "POSYANDU KRAJAN", "POSYANDU NGLIMUT", "POSYANDU KEMLOKO", "POSYANDU TEMPURAN"];
+let POS = POS_DEF.slice();
+function loadPos() {
+    try { const a = JSON.parse(localStorage.getItem(POS_KEY) || "null");
+        if (Array.isArray(a)) { const l = [...new Set(a.map(x => cleanTxt(x, 40).toUpperCase()).filter(Boolean))].slice(0, 40); if (l.length) POS = l; } } catch (e) {}
+}
+function renderPos(sel, quiet) {
+    const s = $("input-posyandu"), f = $("filter-posyandu"), v = sel || s.value, fv = f.value;
+    s.textContent = ""; POS.forEach(p => s.add(new Option(p, p))); s.value = POS.includes(v) ? v : POS[0];
+    f.textContent = ""; f.add(new Option("Semua Wilayah Posyandu", "")); POS.forEach(p => f.add(new Option(p, p))); f.value = POS.includes(fv) ? fv : "";
+    lsSet(POS_KEY, JSON.stringify(POS)); if (!quiet) updateLivePreview();
+}
+function posAdd() {
+    const n = cleanTxt(prompt("Nama posyandu baru:"), 40).toUpperCase(); if (!n) return;
+    if (POS.includes(n)) return showToast("Nama posyandu sudah ada.");
+    POS.push(n); renderPos(n); showToast(`Posyandu "${n}" ditambahkan.`);
+}
+function posEdit() {
+    const o = $("input-posyandu").value, n = cleanTxt(prompt("Ubah nama posyandu:", o), 40).toUpperCase(); if (!n || n === o) return;
+    if (POS.includes(n)) return showToast("Nama posyandu sudah ada.");
+    POS[POS.indexOf(o)] = n; let c = 0; kartaRecords.forEach(r => { if (r.posyandu === o) { r.posyandu = n; c++; } });
+    if (c) saveRecordsToStorage(); renderPos(n); renderDatabaseTable();
+    showToast(`Diubah menjadi "${n}"` + (c ? ` (${c} kartu ikut diperbarui)` : "") + ".");
+}
+function posDel() {
+    const o = $("input-posyandu").value; if (POS.length <= 1) return showToast("Minimal harus ada satu posyandu.");
+    const used = kartaRecords.filter(r => r.posyandu === o).length;
+    if (used) return showToast(`Tidak bisa dihapus: dipakai ${used} kartu. Ubah dulu wilayah kartunya.`);
+    if (!confirm(`Hapus posyandu "${o}"?`)) return;
+    POS = POS.filter(p => p !== o); renderPos(); showToast("Posyandu dihapus.");
+}
+
+function selectImgTarget(key) { activeImgTarget = key; syncImgControls(); }
+function syncImgControls() {
+    const k = activeImgTarget, c = imgCfg[k], isBg = k.startsWith("bg");
+    document.querySelectorAll("[data-chip]").forEach(b => b.className = "px-2.5 py-1 rounded-lg border text-[11px] font-bold " + (b.dataset.chip === k ? "bg-amber-500 border-amber-600 text-slate-950" : "bg-white border-amber-200 text-slate-700"));
+    $("img-rot").value = c.rot || "auto"; $("img-trim").value = c.trim || "auto"; $("img-rot").disabled = $("img-trim").disabled = !isBg;
+    [["zoom", c.zoom + "%"], ["ox", c.ox], ["oy", c.oy]].forEach(([p, lbl]) => { $("img-" + p).value = c[p]; $("img-" + p + "-lbl").textContent = lbl; });
+    const vector = isBg ? c.src === "v1" : !safeImgUrl(c.src);
+    $("img-note").textContent = vector ? (isBg ? "Desain 1 (vektor) mengikuti ukuran kartu. Pilih gambar background untuk mengatur pas/zoom/posisi." : "Logo bawaan (vektor). Pakai tautan atau unggah logo untuk mengatur ukuran & posisinya.") : isBg ? "Otomatis memangkas margin gambar dan menyesuaikan ukuran & orientasi kartu (depan dan belakang). Slider hanya untuk penyesuaian halus." : "Atur dengan slider, atau klik Reset otomatis.";
+    $("card-front").classList.toggle("bg-sel", k === "bgFront"); $("card-back").classList.toggle("bg-sel", k === "bgBack");
+}
+function renderBgSelects() {
+    const base = Object.entries(BUILTIN_BG).map(([v, o]) => [v, o.n]).concat(bgGallery.map(g => ["c:" + g.id, "Unggahan · " + g.name]));
+    ["bgFront", "bgBack"].forEach(k => {
+        const s = imgCfg[k].src, opts = base.slice(); if (!opts.some(o => o[0] === s)) opts.push([s, "Tautan gambar"]);
+        const sel = $("bg-sel-" + k); sel.textContent = ""; opts.forEach(([v, n]) => sel.add(new Option(n, v))); sel.value = s;
+        const u = bgUrl(s) || (BUILTIN_BG[s] && BUILTIN_BG[s].fb) || "";
+        $("bg-thumb-" + k).style.backgroundImage = u ? `url("${u}")` : "linear-gradient(135deg,#0d3b54,#177882)";
+    });
+}
+function setBgSource(key, src) { if (!BUILTIN_BG[src] && !src.startsWith("c:") && !safeImgUrl(src)) return; imgCfg[key].src = src; renderBgSelects(); autoFitImg(key); }
+function applyImgLink() {
+    const k = $("link-target").value, u = safeImgUrl($("link-url").value);
+    if (!IMG_TARGETS[k] || !u) return showToast("Tautan tidak valid. Pakai tautan Google Drive (bagikan ke 'Siapa saja yang memiliki link').");
+    imgCfg[k].src = u; renderBgSelects(); autoFitImg(k); selectImgTarget(k); $("link-url").value = ""; showToast("Gambar dari tautan diterapkan.");
+}
+function shrinkImage(file, max, keepAlpha) {
+    return new Promise((res, rej) => {
+        const fr = new FileReader(); fr.onerror = rej;
+        fr.onload = () => {
+            const im = new Image(); im.onerror = rej;
+            im.onload = () => {
+                const k = Math.min(1, max / Math.max(im.width || 512, im.height || 512)), cv = document.createElement("canvas");
+                cv.width = Math.round((im.width || 512) * k); cv.height = Math.round((im.height || 512) * k);
+                cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+                res(keepAlpha ? cv.toDataURL("image/png") : cv.toDataURL("image/jpeg", 0.88));
+            };
+            im.src = fr.result;
+        };
+        fr.readAsDataURL(file);
+    });
+}
+function handleAssetUpload(ev, key) {
+    const f = ev.target.files[0]; ev.target.value = ""; if (!f) return;
+    if (!/^image\/(png|jpeg|webp|gif)$/.test(f.type) || f.size > 8e6) return showToast("Gunakan gambar PNG/JPG/WEBP/GIF maksimal 8 MB.");
+    const logo = key.startsWith("logo");
+    shrinkImage(f, logo ? 600 : 1600, logo).then(url => {
+        if (logo) imgCfg[key].src = url;
+        else {
+            const id = "u" + Date.now().toString(36);
+            bgGallery.push({ id, name: cleanTxt(f.name.replace(/\.[^.]+$/, ""), 22), url });
+            if (!lsSet("karta_bg_gallery_v1", JSON.stringify(bgGallery))) { bgGallery.pop(); return showToast("Penyimpanan browser penuh."); }
+            imgCfg[key].src = "c:" + id; renderBgSelects();
+        }
+        autoFitImg(key); selectImgTarget(key); showToast("Gambar diterapkan. Untuk default semua perangkat, lebih baik pakai tautan Drive.");
+    }).catch(() => showToast("File gambar tidak dapat dibaca."));
+}
+
+/* ---------- Desain default: designs.json di GitHub ---------- */
+const DESIGN_URL = "designs.json";   // letakkan di folder yang sama dengan halaman ini
+const SEED = () => ({ list: [
+    { id: "d1", name: "Desain 1 · Vektor", data: { img: { bgFront: "v1", bgBack: "v1" } } },
+    { id: "d2", name: "Desain 2 · Batik", data: { img: { bgFront: "p1", bgBack: "p2" } } },
+    { id: "d2s", name: "Desain 2 (tukar)", data: { img: { bgFront: "p2", bgBack: "p1" } } }
+] });
+let DESIGNS = { version: 0, defaultId: "d1", list: [] }, curDesignId = null;
+const curDesign = () => DESIGNS.list.find(d => d.id === curDesignId);
+
+function normLayout(o) {
+    const out = { l: {}, p: {} }; o = o || {};
+    ["l", "p"].forEach(k => Object.keys(DEFAULT_LAYOUT).forEach(id => {
+        const c = (o[k] || {})[id]; if (!c || typeof c !== "object") return;
+        out[k][id] = { top: num(c.top, -20, 120, 0), left: num(c.left, -20, 120, 0), width: num(c.width, 5, 120, 30), scale: num(c.scale, 0.3, 2.5, 1), bold: !!c.bold,
+            fontFamily: /^[\w' ,\-]{1,60}$/.test(c.fontFamily || "") ? c.fontFamily : "", color: /^#[0-9a-f]{6}$/i.test(c.color || "") ? c.color : "" };
+    }));
+    return out;
+}
+function normTexts(o) {
+    const out = {}; o = o || {};
+    Object.keys(DEFAULT_LAYOUT).forEach(id => { const t = o[id]; if (!t || typeof t !== "object") return; out[id] = {}; for (let i = 0; i < 8; i++) if (t[i] != null) out[id][i] = cleanBlock(t[i]); });
+    return out;
+}
+function normDesign(d) {
+    d = d || {}; const dt = d.data || {}, img = {};
+    Object.keys(IMG_TARGETS).forEach(k => img[k] = normImg((dt.img || {})[k], k));
+    return { id: String(d.id || "").toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 24) || "d" + Date.now().toString(36), name: cleanTxt(d.name, 28) || "Desain", data: { img, layout: normLayout(dt.layout), texts: normTexts(dt.texts) } };
+}
+function normDesigns(o) {
+    o = o || {}; const seen = new Set();
+    let list = (Array.isArray(o.list) ? o.list : []).slice(0, 30).map(d => normDesign(d)).filter(d => !seen.has(d.id) && seen.add(d.id));
+    if (!list.length) list = SEED().list.map(d => normDesign(d));
+    return { version: Number(o.version) || 0, defaultId: list.some(d => d.id === o.defaultId) ? o.defaultId : list[0].id, list };
+}
+function snapshotCurrent() {
+    const img = {};
+    Object.keys(IMG_TARGETS).forEach(k => { const c = Object.assign({}, imgCfg[k]); if (c.src.startsWith("c:")) c.src = (bgGallery.find(x => "c:" + x.id === c.src) || {}).url || "v1"; img[k] = c; });
+    const layout = { l: {}, p: {} };
+    ["l", "p"].forEach(o => { try { layout[o] = JSON.parse(localStorage.getItem("karta_gonoharjo_layout_v4_" + o) || "{}"); } catch (e) {} });
+    layout[orientKey()] = JSON.parse(JSON.stringify(layoutConfig));
+    return { img, layout, texts: JSON.parse(JSON.stringify(textsCfg)) };
+}
+function applyDesign(id, silent) {
+    const d = DESIGNS.list.find(x => x.id === id) || DESIGNS.list[0]; if (!d) return;
+    curDesignId = d.id; const dt = d.data;
+    imgCfg = freshImg(); Object.keys(IMG_TARGETS).forEach(k => Object.assign(imgCfg[k], dt.img[k]));
+    ["l", "p"].forEach(o => lsSet("karta_gonoharjo_layout_v4_" + o, JSON.stringify(dt.layout[o] || {})));
+    textsCfg = JSON.parse(JSON.stringify(dt.texts || {}));
+    persistTexts(); lsSet("karta_active_design", d.id);
+    renderBgSelects(); Object.keys(IMG_TARGETS).forEach(applyImg);
+    ["bgFront", "bgBack"].forEach(k => { if (!imgCfg[k].manual) autoFitImg(k); });
+    persistImg(); applyLayout(); renderDesignList(); syncImgControls();
+    if (!silent) showToast(`Desain "${d.name}" dipakai.`);
+}
+function renderDesignList() {
+    const box = $("design-list"); box.textContent = "";
+    DESIGNS.list.forEach(d => {
+        const b = document.createElement("button"); b.type = "button";
+        b.className = "px-3 py-2.5 rounded-xl border text-left font-bold " + (d.id === curDesignId ? "border-denim-600 bg-denim-100 text-denim-900 ring-2 ring-denim-400" : "border-denim-200 bg-white hover:bg-denim-50 text-denim-800");
+        b.textContent = d.name;
+        const s = document.createElement("span"); s.className = "block font-medium text-slate-500"; s.textContent = d.id === DESIGNS.defaultId ? "★ Default semua perangkat" : "Klik untuk memakai";
+        b.appendChild(s); b.onclick = () => applyDesign(d.id); box.appendChild(b);
+    });
+    $("design-note").textContent = (DESIGNS.fromRemote ? "Sumber: designs.json di GitHub." : "Sumber: desain bawaan (designs.json belum ditemukan).") + (DESIGNS.dirty ? " Ada perubahan yang belum diunggah ke GitHub: klik Unduh designs.json." : "");
+}
+function persistDraft() {
+    DESIGNS.dirty = true;
+    lsSet("karta_designs_draft", JSON.stringify({ base: DESIGNS.version, designs: { defaultId: DESIGNS.defaultId, list: DESIGNS.list } }));
+    renderDesignList();
+}
+function saveToDesign() {
+    const d = curDesign(); if (!d) return;
+    d.data = normDesign({ id: d.id, name: d.name, data: snapshotCurrent() }).data; persistDraft();
+    showToast(`Tersimpan ke "${d.name}". Unduh designs.json lalu unggah ke GitHub agar jadi default.`);
+}
+function newDesign() {
+    const name = cleanTxt(prompt("Nama desain baru (disalin dari tampilan saat ini):", "Desain baru"), 28); if (!name) return;
+    if (DESIGNS.list.length >= 30) return showToast("Maksimal 30 desain.");
+    const d = normDesign({ id: "d" + Date.now().toString(36), name, data: snapshotCurrent() });
+    DESIGNS.list.push(d); curDesignId = d.id; lsSet("karta_active_design", d.id); persistDraft(); showToast(`Desain "${name}" ditambahkan.`);
+}
+function renameDesign() { const d = curDesign(), n = d && cleanTxt(prompt("Nama desain:", d.name), 28); if (n) { d.name = n; persistDraft(); } }
+function deleteDesign() {
+    const d = curDesign(); if (!d) return;
+    if (DESIGNS.list.length <= 1) return showToast("Minimal harus ada satu desain.");
+    if (!confirm(`Hapus desain "${d.name}"?`)) return;
+    DESIGNS.list = DESIGNS.list.filter(x => x.id !== d.id);
+    if (DESIGNS.defaultId === d.id) DESIGNS.defaultId = DESIGNS.list[0].id;
+    persistDraft(); applyDesign(DESIGNS.list[0].id, true); showToast("Desain dihapus.");
+}
+function setDefaultDesign() { DESIGNS.defaultId = curDesignId; persistDraft(); showToast("Dijadikan default. Unduh designs.json lalu unggah ke GitHub."); }
+function exportDesigns() {
+    const txt = JSON.stringify({ version: Date.now(), defaultId: DESIGNS.defaultId, list: DESIGNS.list }, null, 1);
+    if (txt.length > 1.5e6) showToast("File besar: sebaiknya logo/background pakai tautan Drive, bukan unggahan.");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type: "application/json" })); a.download = "designs.json"; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function reloadDesigns() {
+    if (!confirm("Buang draf di perangkat ini dan muat ulang default dari GitHub?")) return;
+    ["karta_designs_draft", "karta_work_base", "karta_active_design"].forEach(k => localStorage.removeItem(k)); location.reload();
+}
+function resetWorking() { if (confirm("Kembalikan background, logo, tata letak, dan tulisan ke default desain yang dipilih?")) applyDesign(curDesignId); }
+async function initDesigns() {
+    let rem = null;
+    try { const r = await fetch(DESIGN_URL + "?t=" + Date.now(), { cache: "no-store" }); if (r.ok) rem = normDesigns(await r.json()); } catch (e) {}
+    DESIGNS = rem || normDesigns(SEED()); DESIGNS.fromRemote = !!rem;
+    try {
+        const dr = JSON.parse(localStorage.getItem("karta_designs_draft") || "null");
+        if (dr && dr.base === DESIGNS.version) { const n = normDesigns(dr.designs); DESIGNS.list = n.list; DESIGNS.defaultId = n.defaultId; DESIGNS.dirty = true; }
+        else localStorage.removeItem("karta_designs_draft");
+    } catch (e) {}
+    const fresh = localStorage.getItem("karta_work_base") !== String(DESIGNS.version), act = localStorage.getItem("karta_active_design");
+    curDesignId = !fresh && DESIGNS.list.some(d => d.id === act) ? act : DESIGNS.defaultId;
+    if (fresh) { lsSet("karta_work_base", String(DESIGNS.version)); applyDesign(curDesignId, true); }
+    else { loadImgCfg(); try { textsCfg = JSON.parse(localStorage.getItem("karta_texts_v2") || "{}"); } catch (e) { textsCfg = {}; } applyLayout(); renderDesignList(); }
+}
+
+/* ---------- Portal (login & header) ---------- */
+const PORTALS = [["Portal Utama", "https://gopositif.github.io/", "globe"], ["Portal Sasaran", "https://gopositif.github.io/sasaran/", "qr-code"], ["Portal Kader", "https://gopositif.github.io/kader/", "user-pen"], ["Portal Admin", "https://gopositif.github.io/admin/", "shield-check"]];
+function renderPortals() {
+    [["login-portals", "flex-col text-center gap-1 px-1 py-2.5 text-[10px] sm:text-xs leading-tight"], ["hdr-portals", "gap-1.5 px-3 py-1.5 text-xs whitespace-nowrap shrink-0"]].forEach(([id, cls]) => {
+        const box = $(id); if (!box) return;
+        PORTALS.forEach(([n, u, ic]) => {
+            const a = document.createElement("a"); a.href = u; a.rel = "noopener"; a.className = "portal-link flex items-center justify-center font-bold rounded-xl " + cls;
+            a.innerHTML = `<i data-lucide="${ic}" class="w-4 h-4 shrink-0"></i><span>${n}</span>`; box.appendChild(a);
+        });
+    });
+    lucide.createIcons();
+}
+
+/* ---------- Data warga: validasi & tampilan aman ---------- */
+const posList = () => [...$("input-posyandu").options].map(o => o.value);
+function normRecord(r) {
+    if (!r || typeof r !== "object") return null;
+    const id = cleanId(r.id); if (!id) return null;
+    return { id, kk: cleanTxt(r.kk, 60).toUpperCase(), dusun: cleanTxt(r.dusun, 60).toUpperCase(), rtrw: cleanTxt(r.rtrw, 30).toUpperCase(),
+        posyandu: posList().includes(r.posyandu) ? r.posyandu : posList()[0], pin: cleanPin(r.pin) || "123456", updatedAt: cleanTxt(r.updatedAt, 10),
+        members: (Array.isArray(r.members) ? r.members : []).slice(0, 40).map(m => ({ name: cleanTxt(m && m.name, 60).toUpperCase(), relation: cleanTxt(m && m.relation, 30), category: cleanTxt(m && m.category, 40) })).filter(m => m.name) };
+}
+function loadRecords() {
+    let a = null; try { a = JSON.parse(localStorage.getItem("karta_gonoharjo_db_v3") || "null"); } catch (e) {}
+    kartaRecords = Array.isArray(a) ? a.map(normRecord).filter(Boolean) : DEMO_DATA.map(normRecord);
+    if (!Array.isArray(a)) saveRecordsToStorage();
+    updateBadgeCount();
+}
+function addMemberRow(name = "", relation = "Anggota", category = "Balita") {
+    const row = document.createElement("div");
+    row.className = "member-row bg-denim-50/70 border border-denim-200/80 rounded-xl p-2.5 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center";
+    row.innerHTML = `<div class="sm:col-span-5"><input type="text" maxlength="60" class="m-name w-full px-2.5 py-1.5 text-xs font-semibold uppercase rounded-lg border border-denim-200 bg-white" placeholder="Nama Lengkap Anggota" required></div>
+        <div class="sm:col-span-3"><input type="text" maxlength="30" class="m-rel w-full px-2 py-1.5 text-xs rounded-lg border border-denim-200 bg-white" placeholder="Status Keluarga"></div>
+        <div class="sm:col-span-3"><select class="m-cat w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-denim-200 bg-white"></select></div>
+        <div class="sm:col-span-1 flex justify-end"><button type="button" class="m-del p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Anggota" aria-label="Hapus anggota"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
+    row.querySelector(".m-name").value = name; row.querySelector(".m-rel").value = relation;
+    const sel = row.querySelector(".m-cat");
+    (availableCategories.includes(category) ? availableCategories : [...availableCategories, category]).forEach(c => sel.add(new Option(c, c)));
+    sel.value = category; row.querySelector(".m-del").onclick = () => row.remove();
+    $("members-container").appendChild(row); lucide.createIcons();
+}
+function refreshAllCategoryDropdowns() {
+    document.querySelectorAll(".m-cat").forEach(sel => { const v = sel.value; sel.textContent = ""; availableCategories.forEach(c => sel.add(new Option(c, c))); sel.value = v; });
+}
+function promptAddCustomCategory() {
+    const c = cleanTxt(prompt("Masukkan nama kategori sasaran baru:"), 40); if (!c) return;
+    if (availableCategories.includes(c)) return showToast("Kategori tersebut sudah ada dalam daftar.");
+    availableCategories.push(c);
+    let saved = []; try { saved = JSON.parse(localStorage.getItem("karta_custom_categories") || "[]"); } catch (e) {}
+    saved.push(c); lsSet("karta_custom_categories", JSON.stringify(saved)); lsSet("gopositif_kader_categories", JSON.stringify(availableCategories));
+    refreshAllCategoryDropdowns(); showToast(`Kategori "${c}" berhasil ditambahkan!`);
+}
+function saveKartaData(e) {
+    e.preventDefault();
+    const id = cleanId($("input-id").value) || nextId(); $("input-id").value = id;
+    if (!/^[A-Z0-9]{2,6}-[A-Z0-9]{2,12}$/.test(id)) return showToast("ID kartu harus berformat GP-0001 (huruf/angka dan tanda hubung).");
+    const members = [...document.querySelectorAll(".member-row")].map(r => ({ name: r.querySelector(".m-name").value, relation: r.querySelector(".m-rel").value, category: r.querySelector(".m-cat").value }));
+    const rec = normRecord({ id, kk: $("input-kk").value, dusun: $("input-dusun").value, rtrw: $("input-rtrw").value, posyandu: $("input-posyandu").value, pin: $("input-pin").value, updatedAt: new Date().toISOString().split("T")[0], members });
+    if (!rec.kk || !rec.dusun || !rec.rtrw) return showToast("Nama, dusun, dan RT/RW wajib diisi.");
+    const idx = kartaRecords.findIndex(r => r.id === (editingId || id));
+    if (editingId) { if (idx !== -1) kartaRecords[idx] = rec; editingId = id; $("edit-mode-id").textContent = id; showToast(`Data kartu ${id} berhasil diperbarui!`); }
+    else if (idx !== -1) { kartaRecords[idx] = rec; showToast(`Data kartu ${id} diperbarui!`); }
+    else { kartaRecords.unshift(rec); showToast(`Kartu baru ${id} (${rec.kk}) berhasil dibuat!`); }
+    saveRecordsToStorage(); updateLivePreview(); renderDatabaseTable();
+}
+function renderDatabaseTable() {
+    const tb = $("database-tbody"), q = ($("filter-search").value || "").toLowerCase(), qp = $("filter-posyandu").value, qa = ($("filter-alamat").value || "").toLowerCase();
+    const list = kartaRecords.filter(r => (r.id.toLowerCase().includes(q) || r.kk.toLowerCase().includes(q)) && (!qp || r.posyandu === qp) && (!qa || `${r.dusun} ${r.rtrw}`.toLowerCase().includes(qa)));
+    $("table-footer-info").innerHTML = `<span>Menampilkan <strong>${list.length}</strong> dari <strong>${kartaRecords.length}</strong> total kartu KARTA terdaftar</span>`;
+    if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-slate-500 font-semibold">Tidak ada data kartu KARTA yang cocok dengan pencarian Anda.</td></tr>'; return; }
+    tb.innerHTML = list.map(r => `<tr class="hover:bg-denim-50/80 transition"><td class="py-3 px-4 whitespace-nowrap"><span class="px-2.5 py-1 bg-slate-900 text-amber-300 font-extrabold text-xs rounded-lg tracking-wider">${esc(r.id)}</span></td>
+        <td class="py-3 px-4 font-extrabold text-slate-900">${esc(r.kk)}</td><td class="py-3 px-4 text-slate-700">${esc(r.dusun)}, ${esc(r.rtrw)}</td>
+        <td class="py-3 px-4"><span class="px-2.5 py-0.5 text-[11px] font-bold bg-denim-100 text-denim-800 rounded-md">${esc(r.posyandu)}</span></td>
+        <td class="py-3 px-4 text-center whitespace-nowrap"><div class="inline-flex items-center gap-1.5">
+        <button type="button" data-act="detail" data-id="${esc(r.id)}" class="px-3 py-1.5 bg-denim-700 hover:bg-denim-800 text-white font-bold text-xs rounded-xl inline-flex items-center gap-1.5 transition"><i data-lucide="eye" class="w-3.5 h-3.5"></i>Detail &amp; Cetak</button>
+        <button type="button" data-act="del" data-id="${esc(r.id)}" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Data" aria-label="Hapus data"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td></tr>`).join("");
+    lucide.createIcons();
+}
+function deleteRecord(id) {
+    if (!confirm(`Apakah Anda yakin ingin menghapus data KARTA ${id}?`)) return;
+    kartaRecords = kartaRecords.filter(r => r.id !== id); saveRecordsToStorage(); renderDatabaseTable(); showToast(`Data kartu ${id} telah dihapus.`);
+}
+
+/* ---------- Login: tetap wajib ID & sandi, tercatat di riwayat login ---------- */
+const RIWAYAT_KEY = "gp_login_history";   // dapat dibaca Web Admin (satu origin gopositif.github.io)
+function catatRiwayat(id, nama, role, ok) {
+    try {
+        const a = JSON.parse(localStorage.getItem(RIWAYAT_KEY) || "[]");
+        a.unshift({ waktu: new Date().toISOString(), id: cleanTxt(id, 40), nama: cleanTxt(nama, 60), role: cleanTxt(role, 20), sumber: "KARTA", status: ok ? "berhasil" : "gagal", perangkat: navigator.userAgent.slice(0, 120) });
+        localStorage.setItem(RIWAYAT_KEY, JSON.stringify(a.slice(0, 300)));
+    } catch (e) {}
+}
+function handleLogin(e) {
+    e.preventDefault();
+    if ($("hp-check-login").value) return;
+    const now = Date.now(), lock = +localStorage.getItem("karta_lock") || 0;
+    if (lock > now) return loginMsg(`Terlalu banyak percobaan. Coba lagi dalam ${Math.ceil((lock - now) / 1000)} detik.`);
+    const id = cleanTxt($("login-id").value, 40).toLowerCase(), pw = String($("login-pw").value).slice(0, 64);
+    const acc = ambilAkun().find(a => String(a.id).trim().toLowerCase() === id && String(a.password) === pw);
+    if (!acc) {
+        catatRiwayat(id, "", "-", false);
+        if (++loginFails >= 5) { loginFails = 0; lsSet("karta_lock", String(now + 30000)); }
+        return loginMsg("ID atau kata sandi tidak sesuai.");
+    }
+    loginFails = 0; loginMsg("");
+    const user = { id: cleanTxt(acc.id, 40), nama: cleanTxt(acc.nama || acc.id, 60), role: cleanTxt(acc.role || "Kader", 20) };
+    catatRiwayat(user.id, user.nama, user.role, true);
+    try { sessionStorage.setItem("karta_session", JSON.stringify(user)); } catch (err) {}
+    $("login-pw").value = ""; startSession(user);
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    lucide.createIcons(); renderPortals(); initAuth(); syncCategoriesFromKaderAndStorage(); loadPos(); renderPos(null, true); loadRecords();
+    initLayoutDefaults(); captureOrig(); loadCardCfg(); applyCardSize(true); initDragAndSelect(); initImgUI();
+    $("database-tbody").addEventListener("click", ev => {
+        const b = ev.target.closest("[data-act]"); if (!b) return;
+        if (b.dataset.act === "detail") openDetailModal(b.dataset.id); else deleteRecord(b.dataset.id);
+    });
+    resetFormToNew();
+    renderDatabaseTable();
+    await initDesigns();
+});
+
+</script>
 </body>
 </html>
