@@ -198,7 +198,6 @@
         .portal-link:hover { background: #fff; border-color: #628cc6; color: #2b3f5c; transform: translateY(-1px); }
         body.text-edit-mode-active .editable-target { outline: 1px dashed #0ea5e9; outline-offset: 1px; border-radius: 2px; }
         #login-screen { height: 100dvh; }
-        #hdr-portals { scrollbar-width: thin; }
         @media (max-width: 639px) { #toast { left: 1rem; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); } }
         /* ===== v3 ===== */
         html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -246,9 +245,21 @@
         .hdr-tabs button { padding-inline: .75rem; min-width: 0; white-space: nowrap; }
         .hdr-tabs button span:not(#badge-count) { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
         @media (min-width: 640px) { .hdr-tabs { justify-self: center; } .hdr-tabs button { padding-inline: 1.1rem; } }
-        @media (min-width: 1280px) {
+        @media (min-width: 1100px) {
             .hdr-grid { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); grid-template-areas: "brand tabs user"; }
             .hdr-tabs { justify-self: center; }
+        }
+
+        /* Baris "Pindah web": rata tengah tepat di bawah tab. Jika terlalu sempit (HP) otomatis bisa digeser, tanpa terpotong di kiri */
+        #hdr-portals { justify-content: flex-start; padding-block: .5rem; scrollbar-width: none; -ms-overflow-style: none; }
+        #hdr-portals::-webkit-scrollbar { display: none; }
+        #hdr-portals > :first-child { margin-left: auto; }
+        #hdr-portals > :last-child { margin-right: auto; }
+        #hdr-portals .portal-link { min-height: 2.25rem; }
+        @media (max-width: 639px) {
+            #hdr-portals { padding-block: .4rem; gap: .35rem;
+                -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent 100%);
+                        mask-image: linear-gradient(90deg, transparent 0, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent 100%); }
         }
 
         /* Pratinjau kartu ikut melebar mengikuti panel (teks kartu memakai cqw, jadi tetap proporsional) */
