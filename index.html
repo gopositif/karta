@@ -233,6 +233,69 @@
             #print-area > div { width: auto !important; max-width: none !important; flex: 0 0 auto !important; break-inside: avoid; page-break-inside: avoid; }
         }
         @media (pointer: coarse) { .ibtn { width:2.5rem; height:2.5rem; } }
+
+        /* ===== v4: tata letak fluid, tanpa jarak samping berlebih (HP / tablet / laptop / komputer) ===== */
+        :root { --gutter: clamp(.75rem, 2.2vw, 2.25rem); --wrap: 1920px; }
+        .wrap { width: 100%; max-width: var(--wrap); margin-inline: auto;
+                padding-left: max(var(--gutter), env(safe-area-inset-left)); padding-right: max(var(--gutter), env(safe-area-inset-right)); }
+
+        /* Header: HP & tablet = 2 baris (merek + akun / tab). Layar lebar (>=1280px) = 1 baris, tab tepat di tengah */
+        .hdr-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand user" "tabs tabs"; align-items: center; gap: .5rem 1rem; }
+        .hdr-brand { grid-area: brand; } .hdr-tabs { grid-area: tabs; } .hdr-user { grid-area: user; justify-self: end; }
+        .hdr-tabs { justify-self: stretch; }
+        .hdr-tabs button { padding-inline: .75rem; min-width: 0; white-space: nowrap; }
+        .hdr-tabs button span:not(#badge-count) { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+        @media (min-width: 640px) { .hdr-tabs { justify-self: center; } .hdr-tabs button { padding-inline: 1.1rem; } }
+        @media (min-width: 1280px) {
+            .hdr-grid { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); grid-template-areas: "brand tabs user"; }
+            .hdr-tabs { justify-self: center; }
+        }
+
+        /* Pratinjau kartu ikut melebar mengikuti panel (teks kartu memakai cqw, jadi tetap proporsional) */
+        .karta-wrapper { max-width: 640px; }
+        @media (min-width: 1536px) { .karta-wrapper { max-width: 720px; } }
+
+        /* Baris anggota keluarga: 2 baris rapi di kolom sempit, 1 baris di kolom lebar */
+        #members-container { container-type: inline-size; }
+        .member-row { display: grid; gap: .5rem; align-items: center; grid-template-columns: minmax(0,1fr) minmax(0,1fr) 2.25rem; grid-template-areas: "name name name" "rel cat del"; }
+        .member-row .mc-name { grid-area: name; } .member-row .mc-rel { grid-area: rel; } .member-row .mc-cat { grid-area: cat; } .member-row .mc-del { grid-area: del; display: flex; justify-content: flex-end; }
+        @container (min-width: 540px) {
+            .member-row { grid-template-columns: minmax(0,2fr) minmax(0,1.15fr) minmax(0,1.15fr) 2.25rem; grid-template-areas: "name rel cat del"; }
+        }
+
+        /* Tabel Data Warga: kolom ID & Aksi pas isi, di HP berubah menjadi kartu per warga (tanpa geser samping) */
+        .db-table .col-fit { width: 1%; white-space: nowrap; }
+        @media (min-width: 640px) { .db-table { min-width: 640px; } }
+        @media (max-width: 639px) {
+            .db-table, .db-table tbody, .db-table tr, .db-table td { display: block; width: 100%; }
+            .db-table thead { display: none; }
+            .db-table tbody tr { padding: .9rem 1rem; display: grid; gap: .3rem; }
+            .db-table td { padding: 0 !important; text-align: left !important; }
+            .db-table .col-fit { width: auto; white-space: normal; }
+            .db-table td[colspan] { text-align: center !important; padding: 1.5rem 0 !important; }
+            .db-table td.td-name { font-size: 1rem; }
+            .db-table td.td-act { margin-top: .45rem; }
+            .db-table td.td-act > div { display: flex; width: 100%; gap: .5rem; }
+            .db-table td.td-act button[data-act="detail"] { flex: 1; justify-content: center; min-height: 44px; }
+            .db-table td.td-act button[data-act="del"] { width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #fecdd3; }
+        }
+
+        /* Lancar di HP/tablet: kurangi blur & latar tetap yang membuat scroll tersendat */
+        @media (max-width: 1023px), (pointer: coarse) {
+            body { background-attachment: scroll; }
+            .glass-panel { background: rgba(255,255,255,.92); -webkit-backdrop-filter: none; backdrop-filter: none; }
+            .fabric-hdr { background-color: rgba(238,245,252,.98); -webkit-backdrop-filter: none; backdrop-filter: none; }
+        }
+        /* Cegah iOS/Android memperbesar layar otomatis saat mengetik (font input minimal 16px di HP) */
+        @media (max-width: 767px) and (pointer: coarse) {
+            input:not([type=range]):not([type=color]):not([type=file]):not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px !important; }
+        }
+        /* Layar sangat sempit (<=360px) */
+        @media (max-width: 360px) { .glass-panel { border-radius: 1rem; } #hdr-portals { gap: .25rem; } }
+        /* Layar pendek (HP landscape): header tidak menempel agar area kerja tidak habis */
+        @media (max-height: 520px) { header.fabric-hdr { position: static; } }
+        /* Layar tinggi rendah (HP landscape): modal tidak terpotong */
+        @media (max-height: 520px) { #detail-modal > div > div.overflow-y-auto { max-height: 70dvh; } }
     </style>
 </head>
 <body class="antialiased">
@@ -246,7 +309,7 @@
             <path d="M0,215 C180,115 360,315 600,225 C840,135 1040,295 1240,195 C1340,145 1400,165 1440,185" fill="none" stroke="#c9a96a" stroke-width="1.6" opacity=".7"/>
         </svg>
         <div class="relative z-10 min-h-full flex flex-col items-center justify-center p-4 sm:p-6" style="padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))">
-            <div class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-5 rounded-[28px] overflow-hidden glass-panel" style="box-shadow:0 30px 60px -25px rgba(43,63,92,.45)">
+            <div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 rounded-[28px] overflow-hidden glass-panel" style="box-shadow:0 30px 60px -25px rgba(43,63,92,.45)">
                 <div class="lg:col-span-2 p-6 sm:p-8 text-white flex flex-col gap-5" style="background:var(--weave),linear-gradient(155deg,#4a72ac 0%,#628cc6 55%,#82aad9 100%)">
                     <div class="flex items-center gap-3">
                         <img src="https://lh3.googleusercontent.com/d/1r5Z3o71WH4mpF5qn1Dfeav_V7qNnYldv" alt="Logo GO-Positif" class="w-14 h-14 object-contain shrink-0" onerror="this.style.display='none'">
@@ -300,15 +363,15 @@
     <div id="app-shell" class="hidden">
     <!-- Header (gaya Web Admin) -->
     <header class="fabric-hdr sticky top-0 z-40 border-b border-denim-200/80 shadow-sm no-print">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-            <div class="order-1 flex items-center gap-2.5 min-w-0">
+        <div class="wrap py-2.5 hdr-grid">
+            <div class="hdr-brand flex items-center gap-2.5 min-w-0">
                 <img src="https://lh3.googleusercontent.com/d/1r5Z3o71WH4mpF5qn1Dfeav_V7qNnYldv" alt="Logo GO-Positif" class="w-10 h-10 object-contain shrink-0" onerror="this.style.display='none'">
                 <div class="min-w-0">
                     <h1 class="font-extrabold text-base text-denim-900 leading-none">GO-Positif</h1>
                     <p class="text-[10px] sm:text-[11px] font-semibold text-denim-700 mt-1 truncate">Sistem Cetak KARTA &bull; Desa Gonoharjo, Limbangan</p>
                 </div>
             </div>
-            <nav class="order-3 sm:order-2 w-full sm:w-auto flex items-center gap-1 bg-white/80 p-1 rounded-full border border-denim-200 shadow-inner">
+            <nav class="hdr-tabs flex items-center gap-1 bg-white/80 p-1 rounded-full border border-denim-200 shadow-inner" aria-label="Menu utama">
                 <button onclick="switchTab('generate')" id="tab-btn-generate" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all bg-white text-denim-800 shadow-sm">
                     <i data-lucide="plus-circle" class="w-4 h-4"></i><span>Generate &amp; Desain</span>
                 </button>
@@ -317,8 +380,8 @@
                     <span id="badge-count" class="px-1.5 text-[10px] bg-denim-600 text-white rounded-full">1</span>
                 </button>
             </nav>
-            <div class="order-2 sm:order-3 flex items-center gap-2">
-                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border border-denim-200 text-xs">
+            <div class="hdr-user flex items-center gap-2">
+                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border border-denim-200 text-xs">
                     <i data-lucide="user-check" class="w-4 h-4 text-denim-600"></i>
                     <span id="user-name" class="font-bold text-denim-900 max-w-[9rem] truncate"></span>
                     <span id="user-role" class="px-1.5 py-0.5 rounded-md bg-denim-100 text-denim-700 text-[10px] font-bold"></span>
@@ -328,17 +391,17 @@
                 </button>
             </div>
         </div>
-    <div class="border-t border-denim-200/60"><nav id="hdr-portals" class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1.5 flex items-center gap-1.5 overflow-x-auto" aria-label="Pindah portal"><span class="text-[11px] font-bold text-denim-700 pr-1 shrink-0">Pindah web:</span></nav></div>
+    <div class="border-t border-denim-200/60"><nav id="hdr-portals" class="wrap py-1.5 flex items-center gap-1.5 overflow-x-auto" aria-label="Pindah portal"><span class="text-[11px] font-bold text-denim-700 pr-1 shrink-0">Pindah web:</span></nav></div>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+    <main class="wrap pt-4 sm:pt-6">
 
         <!-- TAB 1: GENERATE & PREVIEW KARTU -->
-        <div id="view-generate" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div id="view-generate" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 xl:gap-6 items-start">
             
             <!-- Left Column: Form Input Data Keluarga (6 Cols) -->
-            <div class="lg:col-span-6 space-y-5 no-print">
+            <div class="lg:col-span-6 min-w-0 space-y-4 sm:space-y-5 no-print">
                 
                 <!-- Banner Mode Edit Data Warga -->
                 <div id="edit-mode-banner" class="hidden bg-amber-50 border border-amber-300 rounded-2xl p-4 flex items-center justify-between gap-3">
@@ -529,7 +592,7 @@
             </div>
 
             <!-- Right Column: Live Card Preview & Two Separate Modes (6 Cols) -->
-            <div class="lg:col-span-6 space-y-4">
+            <div class="lg:col-span-6 min-w-0 space-y-4">
                 
                 <!-- Control Bar: Mode (kiri) + Ekspor PNG, PDF, Print (kanan) -->
                 <div class="glass-panel rounded-2xl p-3 no-print">
@@ -860,8 +923,8 @@
         <div id="view-database" class="hidden space-y-5 no-print">
             
             <!-- Filter & Search Bar -->
-            <div class="glass-panel rounded-2xl p-5">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+            <div class="glass-panel rounded-2xl p-4 sm:p-5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4 mb-4">
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
                             <i data-lucide="database" class="w-5 h-5 text-denim-600"></i>
@@ -869,16 +932,16 @@
                         </h2>
                         <p class="text-xs text-slate-600">Tampilan tabel ringkas untuk ribuan data warga. Klik tombol <strong>Detail & Cetak</strong> pada baris warga untuk melihat kartu, mengedit anggota/kategori, atau ekspor PNG/PDF.</p>
                     </div>
-                    <button onclick="switchTab('generate'); resetFormToNew();" class="btn-jewel text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 self-start md:self-auto">
+                    <button onclick="switchTab('generate'); resetFormToNew();" class="btn-jewel text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 w-full md:w-auto md:shrink-0">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         Tambah KARTA Baru
                     </button>
                 </div>
 
                 <!-- 3 Kolom Filter -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div class="relative">
-                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div class="relative sm:col-span-2 lg:col-span-1">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                         <input type="text" id="filter-search" oninput="renderDatabaseTable()" placeholder="Cari ID (GP-0001) atau Nama KK..." class="w-full pl-10 pr-3.5 py-2 text-sm rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none">
                     </div>
 
@@ -889,7 +952,7 @@
                     </div>
 
                     <div class="relative">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+                        <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                         <input type="text" id="filter-alamat" oninput="renderDatabaseTable()" placeholder="Filter Alamat / Dusun / RT..." class="w-full pl-10 pr-3.5 py-2 text-sm rounded-xl border border-denim-200 bg-white focus:ring-2 focus:ring-denim-500 focus:outline-none">
                     </div>
                 </div>
@@ -898,14 +961,14 @@
             <!-- Tabel Data Warga Ringkas -->
             <div class="glass-panel rounded-2xl overflow-hidden border border-denim-200/80">
                 <div class="overflow-x-auto">
-                    <table class="w-full min-w-[640px] text-left border-collapse">
+                    <table class="db-table w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-denim-900 text-white text-xs uppercase tracking-wider">
-                                <th class="py-3.5 px-4 font-bold">ID KARTA</th>
+                                <th class="col-fit py-3.5 px-4 font-bold">ID KARTA</th>
                                 <th class="py-3.5 px-4 font-bold">Nama Kepala Keluarga</th>
                                 <th class="py-3.5 px-4 font-bold">Alamat</th>
                                 <th class="py-3.5 px-4 font-bold">Asal Posyandu</th>
-                                <th class="py-3.5 px-4 font-bold text-center">Aksi</th>
+                                <th class="col-fit py-3.5 px-4 font-bold text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="database-tbody" class="divide-y divide-denim-100 bg-white/80 text-xs sm:text-sm">
@@ -924,9 +987,9 @@
 
     <!-- Footer (gaya Web Admin, isi disesuaikan untuk KARTA) -->
     <footer class="fabric border-t border-denim-200/80 mt-12 no-print" style="padding-bottom:env(safe-area-inset-bottom)">
-        <div class="max-w-7xl mx-auto px-4 lg:px-8 pt-8 pb-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-8 border-b border-denim-200/70 text-xs">
-                <div class="space-y-3">
+        <div class="wrap pt-8 pb-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8 pb-8 border-b border-denim-200/70 text-xs">
+                <div class="col-span-2 lg:col-span-1 space-y-3">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-white p-1 shadow-sm border border-denim-200 flex items-center justify-center overflow-hidden shrink-0">
                             <img src="https://lh3.googleusercontent.com/d/1r5Z3o71WH4mpF5qn1Dfeav_V7qNnYldv" alt="Logo GO-Positif" class="w-full h-full object-contain" onerror="this.style.display='none'">
@@ -953,7 +1016,7 @@
        				 <li><a href="https://gopositif.github.io/admin/" class="hover:text-denim-600 flex items-center gap-1.5"><i data-lucide="file-bar-chart" class="w-3.5 h-3.5"></i> Web Admin</a></li>
    				 </ul>
 				</div>
-                <div class="space-y-3">
+                <div class="col-span-2 lg:col-span-1 space-y-3">
                     <h4 class="font-extrabold text-sm text-denim-900 border-b border-denim-200/70 pb-1">Sekretariat &amp; Peta</h4>
                     <p class="text-denim-800 font-medium leading-relaxed">Balai Desa Gonoharjo, Kec. Limbangan, Kab. Kendal, Jawa Tengah 51381</p>
                     <p class="text-denim-800 font-medium">+62 812-3456-7890</p>
@@ -985,7 +1048,7 @@
 
     <!-- MODAL DETAIL KARTU KARTA (Membuka detail isi, edit, tata letak, cetak & ekspor PNG/PDF) -->
     <div id="detail-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto no-print">
-        <div class="bg-white rounded-3xl max-w-4xl w-full shadow-2xl border border-denim-200 overflow-hidden my-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-5xl w-full shadow-2xl border border-denim-200 overflow-hidden my-auto">
             <!-- Modal Header -->
             <div class="bg-gradient-to-r from-denim-900 to-mist-800 text-white px-5 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-2.5 min-w-0">
@@ -2264,11 +2327,11 @@ function loadRecords() {
 function addMemberRow(name = "", relation, category = "Balita") {
     if (!relation) relation = [...document.querySelectorAll(".member-row .m-rel")].some(x => x.value === "Kepala Keluarga") ? REL_ANAK : "Kepala Keluarga";
     const row = document.createElement("div");
-    row.className = "member-row bg-denim-50/70 border border-denim-200/80 rounded-xl p-2.5 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center";
-    row.innerHTML = `<div class="sm:col-span-5"><input type="text" maxlength="60" class="m-name w-full px-2.5 py-1.5 text-xs font-semibold uppercase rounded-lg border border-denim-200 bg-white" placeholder="Nama Lengkap Anggota" required></div>
-        <div class="sm:col-span-3"><select class="m-rel w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-denim-200 bg-white" aria-label="Status keluarga"></select></div>
-        <div class="sm:col-span-3"><select class="m-cat w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-denim-200 bg-white" aria-label="Kategori sasaran"></select></div>
-        <div class="sm:col-span-1 flex justify-end"><button type="button" class="m-del p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Anggota" aria-label="Hapus anggota"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
+    row.className = "member-row bg-denim-50/70 border border-denim-200/80 rounded-xl p-2.5";
+    row.innerHTML = `<div class="mc-name"><input type="text" maxlength="60" class="m-name w-full px-2.5 py-1.5 text-xs font-semibold uppercase rounded-lg border border-denim-200 bg-white" placeholder="Nama Lengkap Anggota" required></div>
+        <div class="mc-rel"><select class="m-rel w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-denim-200 bg-white" aria-label="Status keluarga"></select></div>
+        <div class="mc-cat"><select class="m-cat w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-denim-200 bg-white" aria-label="Kategori sasaran"></select></div>
+        <div class="mc-del"><button type="button" class="m-del p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Anggota" aria-label="Hapus anggota"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
     row.querySelector(".m-name").value = name;
     const rs = row.querySelector(".m-rel"); fillRelSelect(rs, relation); rs.onchange = renumberAnak;
     const sel = row.querySelector(".m-cat");
@@ -2378,10 +2441,10 @@ function renderDatabaseTable() {
     const list = kartaRecords.filter(r => (r.id.toLowerCase().includes(q) || r.kk.toLowerCase().includes(q)) && (!qp || r.posyandu === qp) && (!qa || `${r.dusun} ${r.rtrw}`.toLowerCase().includes(qa)));
     $("table-footer-info").innerHTML = `<span>Menampilkan <strong>${list.length}</strong> dari <strong>${kartaRecords.length}</strong> total kartu KARTA terdaftar</span>`;
     if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-slate-500 font-semibold">Tidak ada data kartu KARTA yang cocok dengan pencarian Anda.</td></tr>'; return; }
-    tb.innerHTML = list.map(r => `<tr class="hover:bg-denim-50/80 transition"><td class="py-3 px-4 whitespace-nowrap"><span class="px-2.5 py-1 bg-slate-900 text-amber-300 font-extrabold text-xs rounded-lg tracking-wider">${esc(r.id)}</span></td>
-        <td class="py-3 px-4 font-extrabold text-slate-900">${esc(r.kk)}</td><td class="py-3 px-4 text-slate-700">${esc(r.dusun)}, ${esc(r.rtrw)}</td>
+    tb.innerHTML = list.map(r => `<tr class="hover:bg-denim-50/80 transition"><td class="col-fit py-3 px-4 whitespace-nowrap"><span class="px-2.5 py-1 bg-slate-900 text-amber-300 font-extrabold text-xs rounded-lg tracking-wider">${esc(r.id)}</span></td>
+        <td class="td-name py-3 px-4 font-extrabold text-slate-900">${esc(r.kk)}</td><td class="py-3 px-4 text-slate-700">${esc(r.dusun)}, ${esc(r.rtrw)}</td>
         <td class="py-3 px-4"><span class="px-2.5 py-0.5 text-[11px] font-bold bg-denim-100 text-denim-800 rounded-md">${esc(r.posyandu)}</span></td>
-        <td class="py-3 px-4 text-center whitespace-nowrap"><div class="inline-flex items-center gap-1.5">
+        <td class="td-act col-fit py-3 px-4 text-center whitespace-nowrap"><div class="inline-flex items-center gap-1.5">
         <button type="button" data-act="detail" data-id="${esc(r.id)}" class="px-3 py-1.5 bg-denim-700 hover:bg-denim-800 text-white font-bold text-xs rounded-xl inline-flex items-center gap-1.5 transition"><i data-lucide="eye" class="w-3.5 h-3.5"></i>Detail &amp; Cetak</button>
         <button type="button" data-act="del" data-id="${esc(r.id)}" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Data" aria-label="Hapus data"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td></tr>`).join("");
     lucide.createIcons();
